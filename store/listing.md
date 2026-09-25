@@ -119,15 +119,10 @@ office@adiv.dev
 
 ## Privacy policy URL
 
-`docs/privacy/index.html` is the page; it needs public hosting. Options:
+https://limanovic.github.io/tezkija/privacy/
 
-1. Make this repo public and enable GitHub Pages (Settings → Pages → branch
-   `main`, folder `/docs`) → `https://limanovic.github.io/tezkija/privacy/`
-2. Keep the repo private and copy `docs/privacy/index.html` into the public
-   `quran-daily` repo under `docs/tezkija-privacy/` →
-   `https://limanovic.github.io/quran-daily/tezkija-privacy/`
-
-Play requires the URL before the listing can be saved.
+Served by GitHub Pages from `docs/` on `main` (repo is public). Edit
+`docs/privacy/index.html` and push to update.
 
 ## Graphics checklist
 
