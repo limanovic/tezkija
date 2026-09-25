@@ -3,11 +3,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bookmark, loadBookmarks, removeBookmark } from '@/lib/bookmarks';
-import { AyahRow, SurahRow, getAyahsByIds, getSurahs } from '@/lib/db';
+import { GuidanceRow, SurahRow, getGuidanceByAyahIds, getSurahs } from '@/lib/db';
 import { useT } from '@/lib/i18n';
 import { Theme, useTheme } from '@/lib/theme';
 
-type Item = Bookmark & { row?: AyahRow; surah?: SurahRow };
+type Item = Bookmark & { row?: GuidanceRow; surah?: SurahRow };
 
 export default function BookmarksScreen() {
   const theme = useTheme();
@@ -19,7 +19,7 @@ export default function BookmarksScreen() {
     (async () => {
       const bookmarks = await loadBookmarks();
       const [rows, surahs] = await Promise.all([
-        getAyahsByIds(bookmarks.map((b) => b.ayahId)),
+        getGuidanceByAyahIds(bookmarks.map((b) => b.ayahId)),
         getSurahs(),
       ]);
       const byId = new Map(rows.map((r) => [r.id, r]));
@@ -60,8 +60,10 @@ export default function BookmarksScreen() {
       renderItem={({ item }) => (
         <Pressable
           style={styles.row}
+          disabled={!item.row}
           onPress={() =>
-            router.push({ pathname: '/quran', params: { start: String(item.ayahId) } })
+            item.row &&
+            router.push({ pathname: '/guidance', params: { start: String(item.row.ordinal) } })
           }
         >
           <View style={styles.rowMain}>

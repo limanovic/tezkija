@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Daily Qur’an",
-    "slug": "daily-quran",
-    "version": "1.0.2",
+    "name": "Tezkija",
+    "slug": "tezkija",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "quran",
+    "scheme": "tezkija",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -17,8 +17,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.limanovic.dailyquran",
-      "versionCode": 3,
+      "package": "com.limanovic.tezkija",
+      "versionCode": 1,
       "permissions": [
         "android.permission.SCHEDULE_EXACT_ALARM"
       ],
@@ -56,10 +56,7 @@
       "reactCompiler": true
     },
     "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "6035653e-73fb-4589-82b5-6e40d92993a0"
-      }
+      "router": {}
     },
     "owner": "adilimanovic"
   }

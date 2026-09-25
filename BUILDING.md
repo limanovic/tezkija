@@ -1,4 +1,4 @@
-# Building Daily Qur’an
+# Building Tezkija
 
 Everything here runs locally. No Expo/EAS account is needed for a release build
 or a Play upload.
@@ -78,7 +78,7 @@ lsof -ti:8000 | xargs kill -9   # if it will not go
 Serving on a different port (`8001`, `9000`) sidesteps the whole thing.
 
 The phone needs "install unknown apps" allowed for whichever browser downloads
-it. **Uninstall any older Daily Qur’an first** — a build signed with a different
+it. **Uninstall any older Tezkija first** — a build signed with a different
 key cannot install over one that isn't.
 
 ## Release AAB — for Play
@@ -96,8 +96,8 @@ not the debug key:
 keytool -printcert -jarfile android/app/build/outputs/bundle/release/app-release.aab
 ```
 
-Expected owner: `CN=Daily Quran, OU=Mobile, O=limanovic, C=BA`.
-Expected SHA-256: `76:F7:63:DF:DA:48:80:1B:D2:9B:24:54:0C:90:5E:3F:7E:1F:AF:3A:65:A0:9D:31:8F:E9:23:1E:7A:6C:97:CF`
+Expected owner: whatever the Tezkija upload key was generated with — record
+it here once the key exists (this app must not reuse the Daily Qur’an key).
 
 If the owner comes back as `CN=Android Debug`, the signing plugin didn't run —
 see below.
@@ -141,28 +141,7 @@ build cache; check with `grep versionCode android/app/build.gradle` before
 EAS builds, which no longer produce the artifacts you ship. If you ever go back
 to EAS, reconcile the two.)
 
-## Store screenshots
+## No EAS
 
-`store/graphics/capture-screenshots.sh` is **stale** — its taps are hard-coded
-coordinates and it still reaches for Appearance on the home screen, which moved
-to Settings.
-
-The screenshots in `store/graphics/screenshots/` were captured by looking each
-control up first:
-
-```sh
-adb shell uiautomator dump /sdcard/u.xml
-adb shell cat /sdcard/u.xml | tr '>' '\n' | grep -o 'text="Surahs"[^/]*bounds="[^"]*"'
-```
-
-One gotcha: status-bar demo mode (`sysui_demo`) draws a black bar that looks
-wrong over the light theme, and while it is on the reported bounds sit ~73px
-above where the app actually paints, so taps miss. Leave demo mode off — bounds
-then match the painted position exactly — and crop the status bar off the
-finished PNGs instead.
-
-## Optional: EAS
-
-The project is still linked to `@adilimanovic/daily-quran` (`extra.eas.projectId`
-in `app.json`). Nothing depends on it. Keep it only if you later want cloud
-builds, `eas submit`, or OTA updates.
+`app.json` carries no `extra.eas.projectId`. Run `eas init` only if cloud
+builds are ever wanted; local builds and Play uploads don't need it.

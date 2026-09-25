@@ -1,31 +1,33 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Unit } from './passage';
 import { ThemePreference } from './theme';
 
-export type ReadingMode = 'scroll' | 'page';
-
 /**
- * How a delivery picks its passage. 'sequential' walks the mus'haf in order
- * from wherever this delivery last reached (see lib/wird), wrapping back to
- * Al-Fatiha after An-Nas; 'random' picks a fresh start point every time.
+ * How a delivery picks its passage. 'sequential' walks the guidance set in
+ * order from wherever the shared cursor last reached (see lib/wird), wrapping
+ * back to the first ayah after the last; 'random' picks a fresh start every
+ * time.
  */
 export type WirdMode = 'random' | 'sequential';
 
 export type Delivery = {
   time: string; // 'HH:mm' 24h wall-clock
-  unit: Unit;
-  count: number; // units for this delivery
+  count: number; // guidance ayahs for this delivery
   mode: WirdMode;
 };
+
+/** Codes present in the bundled database ('ar' excluded — that's showArabic). */
+export const TRANSLATION_CODES = ['bs', 'en'] as const;
+export type TranslationCode = (typeof TRANSLATION_CODES)[number];
+
+export type UiLanguage = 'auto' | TranslationCode;
 
 export type Settings = {
   deliveries: Delivery[]; // unique times, sorted by time; empty = no notifications
   showArabic: boolean;
   translations: string[]; // language codes, in display order
-  readingMode: ReadingMode; // continuous scroll vs mushaf-style page swipes
   textScale: number; // multiplier on reader font sizes, within TEXT_SCALE
   theme: ThemePreference;
-  uiLanguage: string; // 'auto' (follow first translation) or a TRANSLATION_CODES entry
+  uiLanguage: UiLanguage; // 'auto' follows the first translation
   /**
    * Languages the notification body is written in, in order. null follows
    * `translations` (plus Arabic if that's all that's shown), so people who
@@ -35,18 +37,12 @@ export type Settings = {
   notificationLanguages: string[] | null;
 };
 
-/** Codes present in the bundled database ('ar' excluded — that's showArabic). */
-export const TRANSLATION_CODES = [
-  'en', 'bs', 'sq', 'de', 'tr', 'fr', 'es', 'it', 'nl', 'ru', 'id', 'ur',
-] as const;
-
 const SETTINGS_KEY = 'settings.v1';
 
 export const DEFAULT_SETTINGS: Settings = {
-  deliveries: [{ time: '09:00', unit: 'ayah', count: 1, mode: 'random' }],
+  deliveries: [{ time: '09:00', count: 1, mode: 'sequential' }],
   showArabic: true,
-  translations: ['en'],
-  readingMode: 'scroll',
+  translations: ['bs'],
   textScale: 1,
   theme: 'system',
   uiLanguage: 'auto',
@@ -63,58 +59,34 @@ export function clampTextScale(scale: number): number {
   return Number(Math.min(max, Math.max(min, snapped)).toFixed(2));
 }
 
-/** Sane per-unit bounds for `count` (tune later). */
-export const COUNT_BOUNDS: Record<Unit, { min: number; max: number }> = {
-  ayah: { min: 1, max: 20 },
-  page: { min: 1, max: 10 },
-};
+/** Guidance ayahs per delivery. */
+export const COUNT_BOUNDS = { min: 1, max: 10 } as const;
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
-/** Shapes stored by older installs (settings.v1 pre-migration). */
-type LegacyToggles = { showEnglish?: boolean; showBosnian?: boolean };
-type LegacyGlobalPassage = { unit?: Unit; count?: number; times?: string[] };
-
 function normalizeDelivery(d: Partial<Delivery>): Delivery {
-  const unit: Unit = d.unit === 'page' ? 'page' : 'ayah';
-  const { min, max } = COUNT_BOUNDS[unit];
+  const { min, max } = COUNT_BOUNDS;
   const count = Math.min(max, Math.max(min, Math.round(d.count ?? min) || min));
-  // Installs from before sequential wird existed had one behaviour — keep it.
-  const mode: WirdMode = d.mode === 'sequential' ? 'sequential' : 'random';
-  return { time: d.time ?? '', unit, count, mode };
+  const mode: WirdMode = d.mode === 'random' ? 'random' : 'sequential';
+  return { time: d.time ?? '', count, mode };
 }
 
 /** Clamp/repair a settings object so the rest of the app can trust it. */
-export function normalizeSettings(
-  raw: (Partial<Settings> & LegacyToggles & LegacyGlobalPassage) | null | undefined,
-): Settings {
-  const { showEnglish, showBosnian, unit, count, times, ...rest } = raw ?? {};
-  const s: Settings = { ...DEFAULT_SETTINGS, ...rest };
-  // Migrate pre-per-delivery installs: one global unit/count applied to each time.
-  if (!Array.isArray(rest.deliveries) && Array.isArray(times)) {
-    s.deliveries = times.map((time) => ({
-      time,
-      unit: unit ?? 'ayah',
-      count: count ?? 1,
-      mode: 'random' as const,
-    }));
-  }
+export function normalizeSettings(raw: Partial<Settings> | null | undefined): Settings {
+  const s: Settings = { ...DEFAULT_SETTINGS, ...(raw ?? {}) };
   const seen = new Set<string>();
-  s.deliveries = s.deliveries
+  s.deliveries = (Array.isArray(s.deliveries) ? s.deliveries : [])
     .map(normalizeDelivery)
     .filter((d) => TIME_RE.test(d.time) && !seen.has(d.time) && (seen.add(d.time), true))
     .sort((a, b) => a.time.localeCompare(b.time));
   // An empty list is a valid choice: it's how a user turns notifications off
   // from inside the app. Fresh installs still start from DEFAULT_SETTINGS.
-  // Migrate pre-list installs: rebuild the list from the old booleans.
-  if (!Array.isArray(rest.translations) && (showEnglish !== undefined || showBosnian !== undefined)) {
-    s.translations = [...(showEnglish ? ['en'] : []), ...(showBosnian ? ['bs'] : [])];
-  }
   const known = new Set<string>(TRANSLATION_CODES);
-  s.translations = [...new Set(s.translations)].filter((c) => known.has(c));
+  s.translations = [...new Set(Array.isArray(s.translations) ? s.translations : [])].filter(
+    (c) => known.has(c),
+  );
   // Something must stay visible.
-  if (!s.showArabic && s.translations.length === 0) s.translations = ['en'];
-  if (s.readingMode !== 'scroll' && s.readingMode !== 'page') s.readingMode = 'scroll';
+  if (!s.showArabic && s.translations.length === 0) s.translations = ['bs'];
   // Snap to the nearest step so a hand-edited or future-version value still
   // lands on something the picker can show as selected.
   s.textScale =

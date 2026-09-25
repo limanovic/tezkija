@@ -13,6 +13,17 @@ export type AyahRow = {
   arabic: string;
 };
 
+/**
+ * An ayah from the guidance set: one of the 340 ayahs about conduct, with its
+ * place in that set. `ordinal` runs 1..340 in mushaf order, and is what
+ * passages, the cursor and the reader position are measured in.
+ */
+export type GuidanceRow = AyahRow & {
+  ordinal: number;
+  /** Addressed to the Prophet, but binding on everyone — shown as a badge. */
+  to_prophet: number;
+};
+
 /** One row of the `language` table. `ar` is Arabic itself (lives in ayah.arabic). */
 export type LanguageRow = {
   code: string;
@@ -35,15 +46,17 @@ export type SurahRow = {
   revelation: 'Meccan' | 'Medinan';
 };
 
-export const TOTAL_AYAHS = 6236;
-export const TOTAL_PAGES = 604;
+/** A surah that has guidance ayahs, with how many and where the first one sits. */
+export type GuidanceSurah = SurahRow & { count: number; firstOrdinal: number };
+
+/** Size of the guidance set. scripts/build-db.py asserts the table matches. */
+export const TOTAL_GUIDANCE = 340;
 
 // Bump the name whenever the bundled database changes shape — the copy runs
 // once per install, so existing installs only pick up a new file under a new
 // name. Older copies are deleted below.
-// v3: Uthmani Arabic text, and Mehanović in place of Korkut for Bosnian.
-const DB_NAME = 'quran.v3.db';
-const OLD_DB_NAMES = ['quran.db', 'quran.v2.db'];
+const DB_NAME = 'tezkija.v1.db';
+const OLD_DB_NAMES: string[] = [];
 
 /**
  * expo-sqlite cannot open a database straight from the asset bundle, so on
@@ -89,78 +102,55 @@ export function getDb(): Promise<SQLite.SQLiteDatabase> {
   return dbPromise;
 }
 
-export async function getAyahsByIdRange(startId: number, endId: number): Promise<AyahRow[]> {
+const GUIDANCE_SELECT = `
+  SELECT a.*, g.ordinal, g.to_prophet
+  FROM guidance g JOIN ayah a ON a.id = g.ayah_id`;
+
+/** Guidance ayahs by ordinal range, inclusive, in mushaf order. */
+export async function getGuidanceByOrdinalRange(
+  start: number,
+  end: number,
+): Promise<GuidanceRow[]> {
   const db = await getDb();
-  return db.getAllAsync<AyahRow>(
-    'SELECT * FROM ayah WHERE id BETWEEN ? AND ? ORDER BY id',
-    [startId, endId],
+  return db.getAllAsync<GuidanceRow>(
+    `${GUIDANCE_SELECT} WHERE g.ordinal BETWEEN ? AND ? ORDER BY g.ordinal`,
+    [start, end],
   );
 }
 
-export async function getAyahsByPageRange(startPage: number, endPage: number): Promise<AyahRow[]> {
-  const db = await getDb();
-  return db.getAllAsync<AyahRow>(
-    'SELECT * FROM ayah WHERE page BETWEEN ? AND ? ORDER BY id',
-    [startPage, endPage],
-  );
+/** The whole guidance set — 340 rows, small enough to hold at once. */
+export function getAllGuidance(): Promise<GuidanceRow[]> {
+  return getGuidanceByOrdinalRange(1, TOTAL_GUIDANCE);
 }
 
-/** Rows for an arbitrary id set (bookmarks). Returned in id order. */
-export async function getAyahsByIds(ids: number[]): Promise<AyahRow[]> {
+/** Guidance rows for an arbitrary ayah id set (bookmarks). Returned in mushaf order. */
+export async function getGuidanceByAyahIds(ids: number[]): Promise<GuidanceRow[]> {
   if (ids.length === 0) return [];
   const db = await getDb();
   const placeholders = ids.map(() => '?').join(', ');
-  return db.getAllAsync<AyahRow>(
-    `SELECT * FROM ayah WHERE id IN (${placeholders}) ORDER BY id`,
+  return db.getAllAsync<GuidanceRow>(
+    `${GUIDANCE_SELECT} WHERE a.id IN (${placeholders}) ORDER BY g.ordinal`,
     ids,
   );
 }
 
-let pageStartsPromise: Promise<Map<number, number>> | null = null;
-
-/** page number → global id of its first ayah, cached after the first query. */
-export function getPageStartIds(): Promise<Map<number, number>> {
-  if (!pageStartsPromise) {
-    pageStartsPromise = (async () => {
-      const db = await getDb();
-      const rows = await db.getAllAsync<{ page: number; startId: number }>(
-        'SELECT page, MIN(id) AS startId FROM ayah GROUP BY page',
-      );
-      return new Map(rows.map((r) => [r.page, r.startId]));
-    })();
-    pageStartsPromise.catch(() => {
-      pageStartsPromise = null;
-    });
-  }
-  return pageStartsPromise;
-}
-
-/** surah number → global id of its first ayah. */
-export async function getSurahStartIds(): Promise<Map<number, number>> {
-  const db = await getDb();
-  const rows = await db.getAllAsync<{ surah: number; startId: number }>(
-    'SELECT surah, MIN(id) AS startId FROM ayah GROUP BY surah',
-  );
-  return new Map(rows.map((r) => [r.surah, r.startId]));
-}
-
 /**
- * Translations for a contiguous ayah id range, keyed lang → ayah id → text.
- * Both passage units produce contiguous ids, so a range query covers all rows.
+ * Translations for a set of ayah ids, keyed lang → ayah id → text. Guidance
+ * ayahs are not contiguous in the mushaf, so this takes ids, not a range.
  */
-export async function getTranslationsByIdRange(
+export async function getTranslationsByIds(
   langs: string[],
-  startId: number,
-  endId: number,
+  ids: number[],
 ): Promise<TranslationMap> {
   const map: TranslationMap = {};
-  if (langs.length === 0) return map;
+  if (langs.length === 0 || ids.length === 0) return map;
   const db = await getDb();
-  const placeholders = langs.map(() => '?').join(', ');
+  const langMarks = langs.map(() => '?').join(', ');
+  const idMarks = ids.map(() => '?').join(', ');
   const rows = await db.getAllAsync<{ lang: string; ayah_id: number; text: string }>(
     `SELECT lang, ayah_id, text FROM translation
-     WHERE lang IN (${placeholders}) AND ayah_id BETWEEN ? AND ?`,
-    [...langs, startId, endId],
+     WHERE lang IN (${langMarks}) AND ayah_id IN (${idMarks})`,
+    [...langs, ...ids],
   );
   for (const row of rows) {
     (map[row.lang] ??= {})[row.ayah_id] = row.text;
@@ -199,4 +189,14 @@ export function getSurahs(): Promise<Map<number, SurahRow>> {
     });
   }
   return surahsPromise;
+}
+
+/** The surahs that contribute guidance ayahs, in mushaf order. */
+export async function getGuidanceSurahs(): Promise<GuidanceSurah[]> {
+  const db = await getDb();
+  return db.getAllAsync<GuidanceSurah>(
+    `SELECT s.*, COUNT(*) AS count, MIN(g.ordinal) AS firstOrdinal
+     FROM guidance g JOIN ayah a ON a.id = g.ayah_id JOIN surah s ON s.number = a.surah
+     GROUP BY s.number ORDER BY s.number`,
+  );
 }

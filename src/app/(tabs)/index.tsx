@@ -1,5 +1,5 @@
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Stack, router, useFocusEffect } from 'expo-router';
+import { Tabs, router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Linking,
@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 import { loadBookmarks, loadLastPosition } from '@/lib/bookmarks';
-import { getAyahsByIds, getSurahs } from '@/lib/db';
+import { TOTAL_GUIDANCE, getGuidanceByOrdinalRange, getSurahs } from '@/lib/db';
 import { useT } from '@/lib/i18n';
 import {
   canScheduleExactAlarms,
@@ -31,8 +31,8 @@ import {
   rebuildSchedule,
   requestPermission,
 } from '@/lib/notifications';
-import { addExactAlarmPermissionListener } from '../../modules/exact-alarms';
-import { buildPassage, buildPassageAt, pageOfAyah } from '@/lib/passage';
+import { addExactAlarmPermissionListener } from '../../../modules/exact-alarms';
+import { buildPassage, buildPassageAt } from '@/lib/passage';
 import {
   COUNT_BOUNDS,
   DEFAULT_SETTINGS,
@@ -45,7 +45,7 @@ import { CURSOR_START, loadCursor, resetCursor } from '@/lib/wird';
 import { useTheme } from '@/lib/theme';
 import { makeListStyles } from '@/lib/ui-styles';
 
-type LastPosition = { id: number; name: string | null; surah: number; ayah: number } | null;
+type Position = { ordinal: number; label: string } | null;
 
 /** The delivery due next — the first one later today, else tomorrow's first. */
 function nextDelivery(deliveries: Delivery[]): Delivery | undefined {
@@ -54,9 +54,20 @@ function nextDelivery(deliveries: Delivery[]): Delivery | undefined {
   return deliveries.find((d) => d.time > hhmm) ?? deliveries[0];
 }
 
+/** "Al-Baqara 2:42" for a guidance ordinal, or a plain fallback. */
+async function labelFor(ordinal: number, fallback: string): Promise<string> {
+  const [rows, surahs] = await Promise.all([
+    getGuidanceByOrdinalRange(ordinal, ordinal),
+    getSurahs(),
+  ]);
+  const row = rows[0];
+  const name = row ? surahs.get(row.surah)?.name_en : null;
+  return row && name ? `${name} ${row.surah}:${row.ayah}` : fallback;
+}
+
 /**
- * Stepper button that keeps firing while held — reaching 20 ayahs from 5 is
- * otherwise fifteen separate taps.
+ * Stepper button that keeps firing while held — reaching 10 from 1 is
+ * otherwise nine separate taps.
  */
 function StepButton({
   label,
@@ -103,7 +114,7 @@ function StepButton({
   );
 }
 
-export default function HomeScreen() {
+export default function GuidanceHomeScreen() {
   const theme = useTheme();
   const t = useT();
   const styles = useMemo(() => makeListStyles(theme), [theme]);
@@ -113,7 +124,7 @@ export default function HomeScreen() {
   // currently open in the edit sheet.
   const [picker, setPicker] = useState<'add' | 'edit' | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
-  const [lastPosition, setLastPosition] = useState<LastPosition>(null);
+  const [lastPosition, setLastPosition] = useState<Position>(null);
   const [bookmarkCount, setBookmarkCount] = useState(0);
   // Where the shared in-order progression stands, and its human reference.
   const [cursor, setCursor] = useState<number>(CURSOR_START);
@@ -147,7 +158,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
-        const [loaded, lastId, bookmarks, wird] = await Promise.all([
+        const [loaded, lastOrdinal, bookmarks, wird] = await Promise.all([
           loadSettings(),
           loadLastPosition(),
           loadBookmarks(),
@@ -158,23 +169,16 @@ export default function HomeScreen() {
         setCursor(wird);
         // Covers coming back from the system toggle if the broadcast is missed.
         if (Platform.OS === 'android') setExactAlarms(canScheduleExactAlarms());
-        if (!lastId) {
+        if (!lastOrdinal) {
           setLastPosition(null);
           return;
         }
-        const [rows, surahs] = await Promise.all([getAyahsByIds([lastId]), getSurahs()]);
-        const row = rows[0];
-        setLastPosition(
-          row
-            ? {
-                id: lastId,
-                name: surahs.get(row.surah)?.name_en ?? null,
-                surah: row.surah,
-                ayah: row.ayah,
-              }
-            : { id: lastId, name: null, surah: 0, ayah: 0 },
-        );
+        setLastPosition({
+          ordinal: lastOrdinal,
+          label: await labelFor(lastOrdinal, t('ayahN', { n: lastOrdinal })),
+        });
       })().catch(() => {});
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
@@ -189,22 +193,18 @@ export default function HomeScreen() {
   const hasSequential = settings?.deliveries.some((d) => d.mode === 'sequential') ?? false;
 
   // Where the progression resumes, spelled out as a reference rather than an
-  // ayah id — "Al-Baqara 2:255" means something, "ayah 262" doesn't.
+  // ordinal — "Al-Baqara 2:42" means something, "ayah 1 of 340" less so.
   useEffect(() => {
     if (!hasSequential) {
       setNextUpLabel(null);
       return;
     }
     let cancelled = false;
-    (async () => {
-      const [rows, surahs] = await Promise.all([getAyahsByIds([cursor]), getSurahs()]);
-      if (cancelled) return;
-      const row = rows[0];
-      const name = row ? surahs.get(row.surah)?.name_en : null;
-      setNextUpLabel(
-        row && name ? `${name} ${row.surah}:${row.ayah}` : t('ayahN', { n: cursor }),
-      );
-    })().catch(() => {});
+    labelFor(cursor, t('ayahOfN', { n: cursor, total: TOTAL_GUIDANCE }))
+      .then((label) => {
+        if (!cancelled) setNextUpLabel(`${label} · ${t('ayahOfN', { n: cursor, total: TOTAL_GUIDANCE })}`);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -232,22 +232,16 @@ export default function HomeScreen() {
 
   const onPreview = useCallback(async () => {
     if (!settings) return;
-    // Preview what actually arrives next, not whichever wird happens to be
+    // Preview what actually arrives next, not whichever delivery happens to be
     // first in the list.
     const d = nextDelivery(settings.deliveries);
     if (!d) return;
-    // An in-order wird has one right answer for "next" — the shared cursor is
-    // the position its next reminder was already queued with.
-    let passageKey;
-    if (d.mode !== 'sequential') {
-      ({ passageKey } = await buildPassage(d.unit, d.count));
-    } else {
-      const at = await loadCursor();
-      ({ passageKey } =
-        d.unit === 'ayah'
-          ? await buildPassageAt('ayah', d.count, at)
-          : await buildPassageAt('page', d.count, await pageOfAyah(at)));
-    }
+    // An in-order delivery has one right answer for "next" — the shared cursor
+    // is the position its next reminder was already queued with.
+    const { passageKey } =
+      d.mode === 'sequential'
+        ? await buildPassageAt(d.count, await loadCursor())
+        : await buildPassage(d.count);
     router.push({ pathname: '/reader', params: { key: JSON.stringify(passageKey) } });
   }, [settings]);
 
@@ -278,8 +272,6 @@ export default function HomeScreen() {
             ]
           : settings.deliveries.map((d) => (d.time === editing ? { ...d, time } : d));
       deliveries.sort((a, b) => a.time.localeCompare(b.time));
-      // The progression is shared, so retiming a delivery carries no progress
-      // with it — there is nothing to rename.
       apply({ ...settings, deliveries });
       setEditing(time);
     },
@@ -287,7 +279,7 @@ export default function HomeScreen() {
   );
 
   const header = (
-    <Stack.Screen
+    <Tabs.Screen
       options={{
         title: t('appTitle'),
         headerRight: () => (
@@ -312,19 +304,12 @@ export default function HomeScreen() {
     );
 
   const updateDelivery = (time: string, patch: Partial<Delivery>) => {
-    const deliveries = settings.deliveries.map((d) => {
-      if (d.time !== time) return d;
-      const next = { ...d, ...patch };
-      next.count = Math.min(COUNT_BOUNDS[next.unit].max, next.count);
-      return next;
-    });
+    const deliveries = settings.deliveries.map((d) => (d.time === time ? { ...d, ...patch } : d));
     apply({ ...settings, deliveries });
   };
 
-  const amountLabel = (d: Delivery) => {
-    const amount = d.unit === 'ayah' ? t('ayahsCount', { n: d.count }) : t('pagesCount', { n: d.count });
-    return `${amount} · ${d.mode === 'sequential' ? t('sequential') : t('random')}`;
-  };
+  const amountLabel = (d: Delivery) =>
+    `${t('ayahsCount', { n: d.count })} · ${d.mode === 'sequential' ? t('sequential') : t('random')}`;
 
   /** Seed the time picker with an existing delivery's time, or 09:00. */
   const pickerValue = (time: string | null) => {
@@ -332,9 +317,7 @@ export default function HomeScreen() {
     return new Date(2000, 0, 1, hh, mm);
   };
 
-  const editedBounds = edited ? COUNT_BOUNDS[edited.unit] : null;
-
-  /** Begin the khatma again; pending reminders hold stale positions. */
+  /** Begin the pass through the set again; pending reminders hold stale positions. */
   const startOver = () => {
     (async () => {
       await resetCursor();
@@ -357,8 +340,6 @@ export default function HomeScreen() {
       )}
 
       <Text style={styles.sectionTitle}>{t('wird')}</Text>
-      {/* "Wird" is unfamiliar to many, and a list of times doesn't say a
-          notification is what arrives — one line covers both. */}
       <Text style={styles.sectionHint}>{t('wirdHint')}</Text>
       <View style={styles.card}>
         {settings.deliveries.length === 0 && (
@@ -475,24 +456,21 @@ export default function HomeScreen() {
       )}
 
       <Text style={styles.sectionTitle}>{t('reading')}</Text>
+      <Text style={styles.sectionHint}>{t('guidanceIntro')}</Text>
       <Pressable
         style={styles.continueCard}
         accessibilityRole="button"
         onPress={() =>
           router.push({
-            pathname: '/quran',
-            params: { start: String(lastPosition?.id ?? 1) },
+            pathname: '/guidance',
+            params: { start: String(lastPosition?.ordinal ?? 1) },
           })
         }
       >
         <View>
           <Text style={styles.continueLabel}>{t('continueReading')}</Text>
           <Text style={styles.continueSub}>
-            {lastPosition
-              ? lastPosition.name
-                ? `${lastPosition.name} ${lastPosition.surah}:${lastPosition.ayah}`
-                : t('ayahN', { n: lastPosition.id })
-              : t('startBeginning')}
+            {lastPosition ? lastPosition.label : t('startBeginning')}
           </Text>
         </View>
         <Text style={[styles.chevron, styles.chevronOnAccent]} accessibilityElementsHidden importantForAccessibility="no">
@@ -533,7 +511,7 @@ export default function HomeScreen() {
       >
         <Pressable style={styles.modalBackdrop} onPress={() => setEditing(null)}>
           <Pressable style={styles.modalSheet} onPress={() => {}}>
-            {edited && editedBounds && (
+            {edited && (
               <>
                 <Text style={styles.modalTitle}>{t('passage')}</Text>
                 <Pressable
@@ -558,38 +536,20 @@ export default function HomeScreen() {
                     onChange={onTimePicked}
                   />
                 )}
-                <View style={styles.segmented}>
-                  {(['ayah', 'page'] as const).map((unit) => (
-                    <Pressable
-                      key={unit}
-                      style={[styles.segment, edited.unit === unit && styles.segmentActive]}
-                      onPress={() => edited.unit !== unit && updateDelivery(edited.time, { unit })}
-                    >
-                      <Text
-                        style={[
-                          styles.segmentText,
-                          edited.unit === unit && styles.segmentTextActive,
-                        ]}
-                      >
-                        {unit === 'ayah' ? t('ayahs') : t('pages')}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </View>
                 <View style={styles.row}>
                   <Text style={styles.rowLabel}>{t('amount')}</Text>
                   <View style={styles.stepper}>
                     <StepButton
                       label={t('decrease')}
                       glyph="−"
-                      disabled={edited.count <= editedBounds.min}
+                      disabled={edited.count <= COUNT_BOUNDS.min}
                       style={[
                         styles.stepButton,
-                        edited.count <= editedBounds.min && styles.stepButtonDisabled,
+                        edited.count <= COUNT_BOUNDS.min && styles.stepButtonDisabled,
                       ]}
                       textStyle={styles.stepButtonText}
                       onStep={() =>
-                        edited.count > editedBounds.min &&
+                        edited.count > COUNT_BOUNDS.min &&
                         updateDelivery(edited.time, { count: edited.count - 1 })
                       }
                     />
@@ -597,24 +557,23 @@ export default function HomeScreen() {
                     <StepButton
                       label={t('increase')}
                       glyph="+"
-                      disabled={edited.count >= editedBounds.max}
+                      disabled={edited.count >= COUNT_BOUNDS.max}
                       style={[
                         styles.stepButton,
-                        edited.count >= editedBounds.max && styles.stepButtonDisabled,
+                        edited.count >= COUNT_BOUNDS.max && styles.stepButtonDisabled,
                       ]}
                       textStyle={styles.stepButtonText}
                       onStep={() =>
-                        edited.count < editedBounds.max &&
+                        edited.count < COUNT_BOUNDS.max &&
                         updateDelivery(edited.time, { count: edited.count + 1 })
                       }
                     />
                   </View>
                 </View>
-                {/* Random or in order. Each time keeps its own place in the
-                    mus'haf, so one wird can walk through it while another
-                    stays a surprise. */}
+                {/* Random or in order. In-order times share one progression
+                    through the set; a random time stays a surprise. */}
                 <View style={styles.segmented}>
-                  {(['random', 'sequential'] as const).map((mode) => (
+                  {(['sequential', 'random'] as const).map((mode) => (
                     <Pressable
                       key={mode}
                       style={[styles.segment, edited.mode === mode && styles.segmentActive]}

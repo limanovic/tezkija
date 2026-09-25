@@ -18,10 +18,10 @@ const { withAppBuildGradle, withGradleProperties } = require('@expo/config-plugi
 const CREDENTIALS_FILE = 'credentials/android-upload-key.json';
 
 const PROPS = {
-  storeFile: 'DAILY_QURAN_UPLOAD_STORE_FILE',
-  storePassword: 'DAILY_QURAN_UPLOAD_STORE_PASSWORD',
-  keyAlias: 'DAILY_QURAN_UPLOAD_KEY_ALIAS',
-  keyPassword: 'DAILY_QURAN_UPLOAD_KEY_PASSWORD',
+  storeFile: 'TEZKIJA_UPLOAD_STORE_FILE',
+  storePassword: 'TEZKIJA_UPLOAD_STORE_PASSWORD',
+  keyAlias: 'TEZKIJA_UPLOAD_KEY_ALIAS',
+  keyPassword: 'TEZKIJA_UPLOAD_KEY_PASSWORD',
 };
 
 function readCredentials(projectRoot) {

@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Linking, Modal, Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 
 import { LanguageRow, getLanguages } from '@/lib/db';
@@ -13,7 +13,14 @@ import {
   rebuildSchedule,
 } from '@/lib/notifications';
 import { TextSizeControl } from '@/components/text-size-control';
-import { Settings, loadSettings, notificationLanguages, saveSettings } from '@/lib/settings';
+import {
+  Settings,
+  TRANSLATION_CODES,
+  UiLanguage,
+  loadSettings,
+  notificationLanguages,
+  saveSettings,
+} from '@/lib/settings';
 import { setThemePreference, useTheme } from '@/lib/theme';
 import { makeListStyles } from '@/lib/ui-styles';
 
@@ -26,11 +33,16 @@ const FEEDBACK_EMAIL = 'office@adiv.dev';
  */
 function openFeedbackMail(): void {
   const version = Constants.expoConfig?.version ?? '?';
-  const subject = encodeURIComponent(`Daily Qur’an feedback (v${version})`);
+  const subject = encodeURIComponent(`Tezkija feedback (v${version})`);
   const body = encodeURIComponent(
     `\n\n—\nApp ${version} · ${Platform.OS} ${Platform.Version}`,
   );
   Linking.openURL(`mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`).catch(() => {});
+}
+
+/** Toggle `code` in an ordered list, keeping the order of the rest. */
+function toggled(list: string[], code: string, on: boolean): string[] {
+  return on ? (list.includes(code) ? list : [...list, code]) : list.filter((c) => c !== code);
 }
 
 export default function SettingsScreen() {
@@ -39,10 +51,6 @@ export default function SettingsScreen() {
   const styles = useMemo(() => makeListStyles(theme), [theme]);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [languages, setLanguages] = useState<LanguageRow[]>([]);
-  // Which list the add-language sheet feeds: reading translations or the
-  // languages notifications are written in.
-  const [languagePicker, setLanguagePicker] = useState<'reading' | 'notifications' | null>(null);
-  const [showUiLanguagePicker, setShowUiLanguagePicker] = useState(false);
 
   useEffect(() => {
     loadSettings().then(setSettings);
@@ -63,12 +71,8 @@ export default function SettingsScreen() {
   /**
    * Persist without touching the notification schedule — for settings the
    * scheduled passages don't bake in. The slider would otherwise cancel and
-   * rebuild every pending notification on each step of a drag.
-   *
-   * Theme, reading mode and showArabic belong here too: none of them reach
-   * `buildBody`, which reads only the notification languages (and, when those
-   * follow the reading text, `translations`). Rebuilding for them threw away
-   * a full window of pending notifications to reschedule it identically.
+   * rebuild every pending notification on each step of a drag. Theme and
+   * showArabic belong here too: neither reaches the notification body.
    */
   const persist = useCallback((next: Settings) => {
     setSettings(next);
@@ -81,9 +85,6 @@ export default function SettingsScreen() {
   if (!settings) return <View style={styles.screen} />;
 
   const languageByCode = new Map(languages.map((l) => [l.code, l]));
-  const availableLanguages = languages.filter(
-    (l) => l.code !== 'ar' && !settings.translations.includes(l.code),
-  );
   // Something must stay visible: block removing the last displayed text.
   const canRemoveTranslation = settings.showArabic || settings.translations.length > 1;
 
@@ -91,20 +92,29 @@ export default function SettingsScreen() {
   // a valid pick here: for some it's the whole point of the notification.
   const notifLangs = notificationLanguages(settings);
   const notifFollowsReading = settings.notificationLanguages === null;
-  const availableNotifLanguages = languages.filter((l) => !notifLangs.includes(l.code));
 
-  const addLanguage = (code: string) => {
-    const target = languagePicker;
-    setLanguagePicker(null);
-    if (target === 'reading') {
-      if (settings.translations.includes(code)) return;
-      apply({ ...settings, translations: [...settings.translations, code] });
-    } else if (target === 'notifications') {
-      if (notifLangs.includes(code)) return;
-      apply({ ...settings, notificationLanguages: [...notifLangs, code] });
-    }
+  const languageRow = (
+    code: string,
+    on: boolean,
+    disabled: boolean,
+    onChange: (value: boolean) => void,
+  ) => {
+    const lang = languageByCode.get(code);
+    return (
+      <View key={code} style={styles.row}>
+        <View>
+          <Text style={styles.rowLabel}>{lang?.native_name ?? code}</Text>
+          {lang && code !== 'ar' && <Text style={styles.rowSub}>{lang.translator}</Text>}
+        </View>
+        <Switch
+          value={on}
+          disabled={disabled}
+          trackColor={{ true: theme.accent }}
+          onValueChange={onChange}
+        />
+      </View>
+    );
   };
-  const pickerLanguages = languagePicker === 'reading' ? availableLanguages : availableNotifLanguages;
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -129,34 +139,6 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <Text style={styles.sectionTitle}>{t('readingModeTitle')}</Text>
-      <View style={styles.card}>
-        <View style={styles.segmented}>
-          {(['scroll', 'page'] as const).map((mode) => (
-            <Pressable
-              key={mode}
-              style={[styles.segment, settings.readingMode === mode && styles.segmentActive]}
-              onPress={() =>
-                settings.readingMode !== mode && persist({ ...settings, readingMode: mode })
-              }
-            >
-              <Text
-                style={[
-                  styles.segmentText,
-                  settings.readingMode === mode && styles.segmentTextActive,
-                ]}
-              >
-                {mode === 'scroll' ? t('continuous') : t('pageByPage')}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-        {/* The segment labels alone don't say what changes — spell it out. */}
-        <Text style={styles.hint}>
-          {settings.readingMode === 'scroll' ? t('scrollHint') : t('pageHint')}
-        </Text>
-      </View>
-
       <Text style={styles.sectionTitle}>{t('textTitle')}</Text>
       <View style={styles.card}>
         {/* Dragging is meaningless without seeing the result, so the sample
@@ -167,43 +149,21 @@ export default function SettingsScreen() {
           showTranslation={settings.translations.length > 0}
           onCommit={(textScale) => persist({ ...settings, textScale })}
         />
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>{t('arabic')}</Text>
-          <Switch
-            value={settings.showArabic}
-            // Never allow removing the last displayed text.
-            disabled={settings.showArabic && settings.translations.length === 0}
-            trackColor={{ true: theme.accent }}
-            onValueChange={(value) => persist({ ...settings, showArabic: value })}
-          />
-        </View>
-        {settings.translations.map((code) => {
-          const lang = languageByCode.get(code);
-          return (
-            <View key={code} style={styles.row}>
-              <View>
-                <Text style={styles.rowLabel}>{lang?.native_name ?? code}</Text>
-                {lang && <Text style={styles.rowSub}>{lang.translator}</Text>}
-              </View>
-              {canRemoveTranslation && (
-                <Pressable
-                  onPress={() =>
-                    apply({
-                      ...settings,
-                      translations: settings.translations.filter((c) => c !== code),
-                    })
-                  }
-                >
-                  <Text style={styles.removeText}>{t('remove')}</Text>
-                </Pressable>
-              )}
-            </View>
-          );
-        })}
-        {availableLanguages.length > 0 && (
-          <Pressable style={styles.addRow} onPress={() => setLanguagePicker('reading')}>
-            <Text style={styles.addText}>+ {t('addLanguage')}</Text>
-          </Pressable>
+        {languageRow(
+          'ar',
+          settings.showArabic,
+          // Never allow removing the last displayed text.
+          settings.showArabic && settings.translations.length === 0,
+          (value) => persist({ ...settings, showArabic: value }),
+        )}
+        {TRANSLATION_CODES.map((code) =>
+          languageRow(
+            code,
+            settings.translations.includes(code),
+            settings.translations.includes(code) && !canRemoveTranslation,
+            (value) =>
+              apply({ ...settings, translations: toggled(settings.translations, code, value) }),
+          ),
         )}
       </View>
 
@@ -221,39 +181,17 @@ export default function SettingsScreen() {
             }
           />
         </View>
-        {!notifFollowsReading && (
-          <>
-            {notifLangs.map((code) => {
-              const lang = languageByCode.get(code);
-              return (
-                <View key={code} style={styles.row}>
-                  <View>
-                    <Text style={styles.rowLabel}>{lang?.native_name ?? code}</Text>
-                    {lang && code !== 'ar' && <Text style={styles.rowSub}>{lang.translator}</Text>}
-                  </View>
-                  {/* Removing the last one would leave the body empty. */}
-                  {notifLangs.length > 1 && (
-                    <Pressable
-                      onPress={() =>
-                        apply({
-                          ...settings,
-                          notificationLanguages: notifLangs.filter((c) => c !== code),
-                        })
-                      }
-                    >
-                      <Text style={styles.removeText}>{t('remove')}</Text>
-                    </Pressable>
-                  )}
-                </View>
-              );
-            })}
-            {availableNotifLanguages.length > 0 && (
-              <Pressable style={styles.addRow} onPress={() => setLanguagePicker('notifications')}>
-                <Text style={styles.addText}>+ {t('addLanguage')}</Text>
-              </Pressable>
-            )}
-          </>
-        )}
+        {!notifFollowsReading &&
+          ['ar', ...TRANSLATION_CODES].map((code) =>
+            languageRow(
+              code,
+              notifLangs.includes(code),
+              // Removing the last one would leave the body empty.
+              notifLangs.includes(code) && notifLangs.length === 1,
+              (value) =>
+                apply({ ...settings, notificationLanguages: toggled(notifLangs, code, value) }),
+            ),
+          )}
       </View>
 
       {/* Permanent escape hatch. The home-screen offer can be dismissed, and
@@ -291,6 +229,30 @@ export default function SettingsScreen() {
         </>
       )}
 
+      <Text style={styles.sectionTitle}>{t('appLanguage')}</Text>
+      <View style={styles.card}>
+        <View style={styles.segmented}>
+          {(['auto', ...TRANSLATION_CODES] as UiLanguage[]).map((code) => (
+            <Pressable
+              key={code}
+              style={[styles.segment, settings.uiLanguage === code && styles.segmentActive]}
+              onPress={() =>
+                settings.uiLanguage !== code && apply({ ...settings, uiLanguage: code })
+              }
+            >
+              <Text
+                style={[
+                  styles.segmentText,
+                  settings.uiLanguage === code && styles.segmentTextActive,
+                ]}
+              >
+                {code === 'auto' ? t('automatic') : languageByCode.get(code)?.native_name ?? code}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
       <Text style={styles.sectionTitle}>{t('feedback')}</Text>
       <View style={styles.card}>
         <Pressable style={styles.row} accessibilityRole="button" onPress={openFeedbackMail}>
@@ -301,93 +263,6 @@ export default function SettingsScreen() {
         </Pressable>
         <Text style={styles.hint}>{t('feedbackHint')}</Text>
       </View>
-
-      <Text style={styles.sectionTitle}>{t('appLanguage')}</Text>
-      <View style={styles.card}>
-        <Pressable
-          style={styles.row}
-          accessibilityRole="button"
-          onPress={() => setShowUiLanguagePicker(true)}
-        >
-          <Text style={styles.rowLabel}>{t('appLanguage')}</Text>
-          <View style={styles.rowRight}>
-            <Text style={styles.rowSub}>
-              {settings.uiLanguage === 'auto'
-                ? t('automatic')
-                : languageByCode.get(settings.uiLanguage)?.native_name ?? settings.uiLanguage}
-            </Text>
-            <Text style={styles.chevron} accessibilityElementsHidden importantForAccessibility="no">
-              ›
-            </Text>
-          </View>
-        </Pressable>
-      </View>
-
-      <Modal
-        visible={languagePicker !== null}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setLanguagePicker(null)}
-      >
-        <Pressable style={styles.modalBackdrop} onPress={() => setLanguagePicker(null)}>
-          <Pressable style={styles.modalSheet} onPress={() => {}}>
-            <Text style={styles.modalTitle}>{t('addLanguage')}</Text>
-            <ScrollView style={styles.modalList}>
-              {pickerLanguages.map((lang) => (
-                <Pressable
-                  key={lang.code}
-                  style={styles.modalRow}
-                  onPress={() => addLanguage(lang.code)}
-                >
-                  <Text style={styles.modalRowLabel}>{lang.native_name}</Text>
-                  <Text style={styles.modalRowSub}>
-                    {lang.code === 'ar' ? lang.name_en : `${lang.name_en} · ${lang.translator}`}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
-
-      <Modal
-        visible={showUiLanguagePicker}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setShowUiLanguagePicker(false)}
-      >
-        <Pressable style={styles.modalBackdrop} onPress={() => setShowUiLanguagePicker(false)}>
-          <Pressable style={styles.modalSheet} onPress={() => {}}>
-            <Text style={styles.modalTitle}>{t('appLanguage')}</Text>
-            <ScrollView style={styles.modalList}>
-              <Pressable
-                style={styles.modalRow}
-                onPress={() => {
-                  setShowUiLanguagePicker(false);
-                  apply({ ...settings, uiLanguage: 'auto' });
-                }}
-              >
-                <Text style={styles.modalRowLabel}>{t('automatic')}</Text>
-              </Pressable>
-              {languages
-                .filter((lang) => lang.code !== 'ar')
-                .map((lang) => (
-                  <Pressable
-                    key={lang.code}
-                    style={styles.modalRow}
-                    onPress={() => {
-                      setShowUiLanguagePicker(false);
-                      apply({ ...settings, uiLanguage: lang.code });
-                    }}
-                  >
-                    <Text style={styles.modalRowLabel}>{lang.native_name}</Text>
-                    <Text style={styles.modalRowSub}>{lang.name_en}</Text>
-                  </Pressable>
-                ))}
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </ScrollView>
   );
 }

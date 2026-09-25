@@ -1,21 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TOTAL_AYAHS } from './db';
+import { TOTAL_GUIDANCE } from './db';
 
 /*
- * How far the sequential wird has got: the ayah its *next* in-order delivery
- * starts from.
+ * How far the in-order reading has got: the guidance ayah (by ordinal, 1..340)
+ * its *next* in-order delivery starts from.
  *
  * There is one position, not one per delivery time. Every time set to "in
- * order" draws from it, in clock order — 09:00 takes 1:1, 10:00 takes 1:2,
- * 14:00 takes 1:3 — so several readings a day are one continuous passage
- * through the mus'haf rather than several parallel ones all starting at
- * Al-Fatiha. A time set to "random" never touches it, which is how a delivery
- * opts out of the progression.
- *
- * The position is always an ayah id, even for deliveries measured in pages: a
- * page delivery starts at the page containing this ayah and leaves the cursor
- * just past that page's last ayah. One number keeps mixed-unit setups on a
- * single progression.
+ * order" draws from it, in clock order — 09:00 takes #1, 10:00 takes #2,
+ * 14:00 takes #3 — so several readings a day are one continuous pass through
+ * the set rather than several parallel ones all starting at 2:42. A time set
+ * to "random" never touches it, which is how a delivery opts out.
  *
  * Kept out of Settings on purpose. The scheduler advances it as occurrences
  * elapse, while Settings is held in React state on two screens — a screen that
@@ -28,55 +22,37 @@ import { TOTAL_AYAHS } from './db';
  * and rebuilding the window always lands on the same passages.
  */
 
-const WIRD_KEY = 'wird.v2';
-/** Pre-shared-cursor shape: { [deliveryTime]: { ayah, page } }. */
-const LEGACY_KEY = 'wird.v1';
+const CURSOR_KEY = 'guidance.cursor.v1';
 
-/** Al-Fatiha 1:1 — where a wird that has never run begins. */
+/** The first guidance ayah — where a reading that has never run begins. */
 export const CURSOR_START = 1;
 
-/** Repair a stored position into a usable ayah id. */
+/** Repair a stored position into a usable ordinal. */
 export function normalizeCursor(value: unknown): number {
   const n = Math.floor(Number(value));
-  return Number.isFinite(n) && n >= 1 && n <= TOTAL_AYAHS ? n : CURSOR_START;
+  return Number.isFinite(n) && n >= 1 && n <= TOTAL_GUIDANCE ? n : CURSOR_START;
 }
 
-/** Next start after taking `count` units from `start`, wrapping past the end. */
+/** Next start after taking `count` ayahs from `start`, wrapping past the end. */
 export function advance(start: number, count: number, total: number): number {
   return ((start - 1 + count) % total) + 1;
 }
 
 export async function loadCursor(): Promise<number> {
-  const raw = await AsyncStorage.getItem(WIRD_KEY);
-  if (raw !== null) return normalizeCursor(JSON.parse(raw));
-  return migrateLegacyCursor();
-}
-
-/**
- * Per-delivery cursors predate the shared progression. Collapse them by taking
- * the furthest one — resuming slightly ahead re-reads nothing, where resuming
- * behind would repeat passages the user has already been sent.
- */
-async function migrateLegacyCursor(): Promise<number> {
-  const raw = await AsyncStorage.getItem(LEGACY_KEY);
-  if (!raw) return CURSOR_START;
+  const raw = await AsyncStorage.getItem(CURSOR_KEY);
+  if (raw === null) return CURSOR_START;
   try {
-    const parsed = JSON.parse(raw) as Record<string, { ayah?: number }>;
-    const positions = Object.values(parsed ?? {}).map((c) => normalizeCursor(c?.ayah));
-    const furthest = positions.length > 0 ? Math.max(...positions) : CURSOR_START;
-    await saveCursor(furthest);
-    await AsyncStorage.removeItem(LEGACY_KEY);
-    return furthest;
+    return normalizeCursor(JSON.parse(raw));
   } catch {
     return CURSOR_START;
   }
 }
 
 export async function saveCursor(position: number): Promise<void> {
-  await AsyncStorage.setItem(WIRD_KEY, JSON.stringify(normalizeCursor(position)));
+  await AsyncStorage.setItem(CURSOR_KEY, JSON.stringify(normalizeCursor(position)));
 }
 
-/** Start the khatma over from Al-Fatiha. */
+/** Start the pass through the set over from the first ayah. */
 export async function resetCursor(): Promise<void> {
   await saveCursor(CURSOR_START);
 }

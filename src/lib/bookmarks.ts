@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  */
 
 export type Bookmark = {
-  ayahId: number; // global 1..6236
+  ayahId: number; // global 1..6236 — stable across future changes to the set
   createdAt: number; // epoch ms
 };
 
@@ -49,13 +49,13 @@ export async function removeBookmark(ayahId: number): Promise<Bookmark[]> {
   return next;
 }
 
-/** Where the user last was in the continuous reader (global ayah id). */
+/** Where the user last was in the full list (guidance ordinal, 1..340). */
 export async function loadLastPosition(): Promise<number | null> {
   const raw = await AsyncStorage.getItem(LAST_POSITION_KEY);
-  const id = raw ? Number(raw) : NaN;
-  return Number.isInteger(id) && id >= 1 ? id : null;
+  const n = raw ? Number(raw) : NaN;
+  return Number.isInteger(n) && n >= 1 ? n : null;
 }
 
-export async function saveLastPosition(ayahId: number): Promise<void> {
-  await AsyncStorage.setItem(LAST_POSITION_KEY, String(ayahId));
+export async function saveLastPosition(ordinal: number): Promise<void> {
+  await AsyncStorage.setItem(LAST_POSITION_KEY, String(ordinal));
 }

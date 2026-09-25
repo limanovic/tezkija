@@ -3,15 +3,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AyahBlock } from '@/components/ayah-block';
-import { loadBookmarks } from '@/lib/bookmarks';
 import {
-  AyahRow,
+  GuidanceRow,
   LanguageRow,
   SurahRow,
   TranslationMap,
   getLanguages,
   getSurahs,
-  getTranslationsByIdRange,
+  getTranslationsByIds,
 } from '@/lib/db';
 import { useT } from '@/lib/i18n';
 import { formatReference, parsePassageKey, resolvePassage } from '@/lib/passage';
@@ -19,15 +18,15 @@ import { Settings, loadSettings } from '@/lib/settings';
 import { Theme, useTheme } from '@/lib/theme';
 
 type LoadedPassage = {
-  rows: AyahRow[];
+  rows: GuidanceRow[];
   reference: string;
   surahs: Map<number, SurahRow>;
   settings: Settings;
   translations: TranslationMap;
   languages: Map<string, LanguageRow>;
-  latestBookmarkId: number | null;
 };
 
+/** Exactly the passage a notification delivered (or a preview of the next one). */
 export default function ReaderScreen() {
   const theme = useTheme();
   const t = useT();
@@ -41,32 +40,19 @@ export default function ReaderScreen() {
   useEffect(() => {
     if (!key) return;
     (async () => {
-      const [rows, surahs, settings, languageRows, bookmarks] = await Promise.all([
+      const [rows, surahs, settings, languageRows] = await Promise.all([
         resolvePassage(key),
         getSurahs(),
         loadSettings(),
         getLanguages(),
-        loadBookmarks(),
       ]);
-      const translations =
-        rows.length > 0
-          ? await getTranslationsByIdRange(
-              settings.translations,
-              rows[0].id,
-              rows[rows.length - 1].id,
-            )
-          : {};
-      const reference = await formatReference(rows, key);
+      const translations = await getTranslationsByIds(
+        settings.translations,
+        rows.map((r) => r.id),
+      );
+      const reference = await formatReference(rows);
       const languages = new Map(languageRows.map((l) => [l.code, l]));
-      setPassage({
-        rows,
-        reference,
-        surahs,
-        settings,
-        translations,
-        languages,
-        latestBookmarkId: bookmarks[0]?.ayahId ?? null,
-      });
+      setPassage({ rows, reference, surahs, settings, translations, languages });
     })().catch(() => setError(true));
   }, [key]);
 
@@ -85,11 +71,7 @@ export default function ReaderScreen() {
     );
   }
 
-  const { rows, reference, surahs, settings, translations, languages, latestBookmarkId } = passage;
-
-  const continueFrom = (startId: number) => {
-    router.push({ pathname: '/quran', params: { start: String(startId) } });
-  };
+  const { rows, reference, surahs, settings, translations, languages } = passage;
 
   return (
     <>
@@ -102,6 +84,7 @@ export default function ReaderScreen() {
               key={row.id}
               row={row}
               surahHeader={newSurah ? surahs.get(row.surah) : undefined}
+              badge={row.to_prophet ? t('toProphet') : undefined}
               settings={settings}
               translations={translations}
               languages={languages}
@@ -111,17 +94,17 @@ export default function ReaderScreen() {
 
         {rows.length > 0 && (
           <View style={styles.actions}>
-            <Pressable style={styles.primaryButton} onPress={() => continueFrom(rows[0].id)}>
+            <Pressable
+              style={styles.primaryButton}
+              onPress={() =>
+                router.push({
+                  pathname: '/guidance',
+                  params: { start: String(rows[0].ordinal) },
+                })
+              }
+            >
               <Text style={styles.primaryButtonText}>{t('continueAyah')}</Text>
             </Pressable>
-            {latestBookmarkId !== null && (
-              <Pressable
-                style={styles.secondaryButton}
-                onPress={() => continueFrom(latestBookmarkId)}
-              >
-                <Text style={styles.secondaryButtonText}>{t('continueBookmark')}</Text>
-              </Pressable>
-            )}
           </View>
         )}
       </ScrollView>
@@ -148,12 +131,5 @@ function makeStyles(theme: Theme) {
       paddingVertical: 15,
     },
     primaryButtonText: { color: theme.onAccent, fontSize: 16, fontWeight: '600' },
-    secondaryButton: {
-      backgroundColor: theme.accentSoft,
-      borderRadius: 12,
-      alignItems: 'center',
-      paddingVertical: 15,
-    },
-    secondaryButtonText: { color: theme.accent, fontSize: 16, fontWeight: '600' },
   });
 }

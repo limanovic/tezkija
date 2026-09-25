@@ -2,15 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as IntentLauncher from 'expo-intent-launcher';
 import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
-import { AyahRow, TOTAL_AYAHS, getTranslationsByIdRange } from './db';
+import { GuidanceRow, TOTAL_GUIDANCE, getTranslationsByIds } from './db';
 import { applyUiLanguage, t } from './i18n';
-import {
-  PassageKey,
-  buildPassage,
-  buildPassageAt,
-  formatReference,
-  pageOfAyah,
-} from './passage';
+import { PassageKey, buildPassage, buildPassageAt, formatReference } from './passage';
 import { Delivery, Settings, notificationLanguages } from './settings';
 import { advance, loadCursor, saveCursor } from './wird';
 
@@ -41,10 +35,8 @@ export type LedgerEntry = {
   dateISO: string; // 'YYYY-MM-DD' local calendar day
   time: string; // 'HH:mm'
   passageKey: PassageKey;
-  // Where the shared wird cursor lands once this occurrence has fired. Set only
-  // for passages taken in order — a random pick must never move the cursor.
-  // Stored rather than recomputed because a page-sized passage's end is a
-  // database lookup, and settling has to work from the ledger alone.
+  // Where the shared cursor lands once this occurrence has fired. Set only for
+  // passages taken in order — a random pick must never move the cursor.
   nextCursor?: number;
 };
 
@@ -53,11 +45,10 @@ const EXACT_PROMPT_KEY = 'exactAlarmPrompt.dismissed.v1';
 const AUTOSTART_PROMPT_KEY = 'autostartPrompt.dismissed.v1';
 const MAX_PENDING = 60;
 // Android freezes a channel's importance at creation time — later
-// setNotificationChannelAsync calls with the same id can't raise it. The `-v2`
-// suffix exists because the original channel shipped at DEFAULT importance,
-// which puts the reminder silently in the shade instead of on screen.
-const ANDROID_CHANNEL_ID = 'daily-quran-v2';
-const LEGACY_ANDROID_CHANNEL_IDS = ['daily-quran'];
+// setNotificationChannelAsync calls with the same id can't raise it, so a
+// change of importance needs a new id here and the old one listed below.
+const ANDROID_CHANNEL_ID = 'tezkija-v1';
+const LEGACY_ANDROID_CHANNEL_IDS: string[] = [];
 
 export function configureNotificationHandling(): void {
   Notifications.setNotificationHandler({
@@ -210,16 +201,13 @@ async function settleElapsed(now: Date): Promise<LedgerEntry[]> {
  * language in the user's order. Arabic only when asked for (or when nothing
  * else is shown) — it renders poorly in OS notifications.
  */
-async function buildBody(rows: AyahRow[], settings: Settings): Promise<string> {
+async function buildBody(rows: GuidanceRow[], settings: Settings): Promise<string> {
   const langs = notificationLanguages(settings);
   const arabic = () => rows.map((r) => r.arabic).join(' ');
   let blocks: string[] = [];
   if (rows.length > 0) {
     const codes = langs.filter((c) => c !== 'ar');
-    const map =
-      codes.length > 0
-        ? await getTranslationsByIdRange(codes, rows[0].id, rows[rows.length - 1].id)
-        : {};
+    const map = await getTranslationsByIds(codes, rows.map((r) => r.id));
     blocks = langs
       .map((lang) =>
         lang === 'ar' ? arabic() : rows.map((r) => map[lang]?.[r.id] ?? '').join(' ').trim(),
@@ -233,10 +221,8 @@ async function buildBody(rows: AyahRow[], settings: Settings): Promise<string> {
 }
 
 /**
- * `cursor` present means this delivery is in order and resumes from that ayah.
- * A page-sized delivery starts at the page that ayah falls on, and leaves the
- * cursor just past that page range's last ayah — so ayah- and page-sized
- * readings stay on one progression.
+ * `cursor` present means this delivery is in order and resumes from that
+ * ordinal; absent, the passage is a random pick that leaves the cursor alone.
  */
 async function scheduleOccurrence(
   dateISO: string,
@@ -247,17 +233,13 @@ async function scheduleOccurrence(
   let passage: Awaited<ReturnType<typeof buildPassage>>;
   let nextCursor: number | undefined;
   if (cursor === undefined) {
-    passage = await buildPassage(delivery.unit, delivery.count);
-  } else if (delivery.unit === 'ayah') {
-    passage = await buildPassageAt('ayah', delivery.count, cursor);
-    nextCursor = advance(cursor, passage.passageKey.count, TOTAL_AYAHS);
+    passage = await buildPassage(delivery.count);
   } else {
-    passage = await buildPassageAt('page', delivery.count, await pageOfAyah(cursor));
-    const lastId = passage.rows[passage.rows.length - 1]?.id ?? cursor;
-    nextCursor = advance(lastId, 1, TOTAL_AYAHS);
+    passage = await buildPassageAt(delivery.count, cursor);
+    nextCursor = advance(cursor, passage.passageKey.count, TOTAL_GUIDANCE);
   }
   const { rows, passageKey } = passage;
-  const title = await formatReference(rows, passageKey);
+  const title = await formatReference(rows);
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title,
@@ -372,7 +354,7 @@ async function topUpScheduleInner(settings: Settings): Promise<LedgerEntry[]> {
 
 /**
  * Settings changed: throw away every pending pick and rebuild the whole
- * window with the new unit/count/times/translations.
+ * window with the new count/times/translations.
  */
 export function rebuildSchedule(settings: Settings): Promise<LedgerEntry[]> {
   return enqueue(async () => {

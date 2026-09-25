@@ -10,6 +10,8 @@ type Props = {
   row: AyahRow;
   /** When set, a surah header is rendered above the ayah. */
   surahHeader?: SurahRow;
+  /** Short label shown beside the reference — "To the Prophet". */
+  badge?: string;
   settings: Settings;
   translations: TranslationMap;
   languages: Map<string, LanguageRow>;
@@ -21,6 +23,7 @@ type Props = {
 function AyahBlockInner({
   row,
   surahHeader,
+  badge,
   settings,
   translations,
   languages,
@@ -50,10 +53,17 @@ function AyahBlockInner({
       )}
       <View style={styles.ayahBlock}>
         <View style={styles.chipRow}>
-          <View style={[styles.refChip, bookmarked && styles.refChipBookmarked]}>
-            <Text style={[styles.refChipText, bookmarked && styles.refChipTextBookmarked]}>
-              {row.surah}:{row.ayah}
-            </Text>
+          <View style={styles.chips}>
+            <View style={[styles.refChip, bookmarked && styles.refChipBookmarked]}>
+              <Text style={[styles.refChipText, bookmarked && styles.refChipTextBookmarked]}>
+                {row.surah}:{row.ayah}
+              </Text>
+            </View>
+            {badge && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{badge}</Text>
+              </View>
+            )}
           </View>
           {onToggleBookmark && (
             <Pressable hitSlop={10} onPress={() => onToggleBookmark(row.id)}>
@@ -134,6 +144,15 @@ function makeStyles(theme: Theme, scale: number) {
       justifyContent: 'space-between',
       marginBottom: 10,
     },
+    chips: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    badge: {
+      borderRadius: 6,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.gold,
+    },
+    badgeText: { color: theme.gold, fontSize: 12, fontWeight: '600' },
     refChip: {
       backgroundColor: theme.accentSoft,
       borderRadius: 6,

@@ -133,9 +133,10 @@ export default function RootLayout() {
           headerTitleStyle: { fontWeight: '600' },
         }}
       >
-        <Stack.Screen name="index" options={{ title: t('appTitle') }} />
+        {/* The tabs draw their own headers. */}
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="reader" options={{ title: '' }} />
-        <Stack.Screen name="quran" options={{ title: t('quran') }} />
+        <Stack.Screen name="guidance" options={{ title: t('guidanceTitle') }} />
         <Stack.Screen name="surahs" options={{ title: t('surahs') }} />
         <Stack.Screen name="bookmarks" options={{ title: t('bookmarks') }} />
         <Stack.Screen name="settings" options={{ title: t('settings') }} />
