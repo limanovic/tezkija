@@ -1,0 +1,155 @@
+import { StyleSheet } from 'react-native';
+
+import { Theme } from '@/lib/theme';
+
+/**
+ * Card / row / segment styles shared by the home and settings screens — the
+ * two list-shaped screens that must look like one continuous surface.
+ */
+export function makeListStyles(theme: Theme) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: theme.background },
+    content: { padding: 20, paddingBottom: 48 },
+    banner: {
+      backgroundColor: theme.accentSoft,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 20,
+    },
+    bannerText: { color: theme.text, fontSize: 14, lineHeight: 20 },
+    bannerButton: {
+      alignSelf: 'flex-start',
+      backgroundColor: theme.accent,
+      borderRadius: 8,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      marginTop: 12,
+    },
+    bannerButtonText: { color: theme.onAccent, fontWeight: '600', fontSize: 14 },
+    sectionTitle: {
+      fontSize: 12,
+      fontWeight: '700',
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+      color: theme.textMuted,
+      marginBottom: 8,
+      marginTop: 16,
+    },
+    card: {
+      backgroundColor: theme.surface,
+      borderRadius: 14,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.border,
+      paddingHorizontal: 16,
+      paddingVertical: 6,
+      marginBottom: 8,
+    },
+    segmented: {
+      flexDirection: 'row',
+      backgroundColor: theme.background,
+      borderRadius: 10,
+      padding: 3,
+      marginVertical: 10,
+    },
+    segment: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 8 },
+    segmentActive: { backgroundColor: theme.accent },
+    segmentText: { fontSize: 15, fontWeight: '500', color: theme.textMuted },
+    segmentTextActive: { color: theme.onAccent, fontWeight: '600' },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+    },
+    rowLabel: { fontSize: 16, color: theme.text },
+    rowSub: { fontSize: 12, color: theme.textMuted, marginTop: 2 },
+    rowRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    rowValue: { fontSize: 15, color: theme.textMuted },
+    sectionHint: {
+      fontSize: 13,
+      lineHeight: 18,
+      color: theme.textMuted,
+      marginTop: -4,
+      marginBottom: 10,
+    },
+    hint: { fontSize: 13, lineHeight: 18, color: theme.textMuted, paddingBottom: 12 },
+    sample: { paddingTop: 14, paddingBottom: 6 },
+    sampleArabic: {
+      fontFamily: 'UthmanicHafs',
+      color: theme.text,
+      textAlign: 'right',
+      writingDirection: 'rtl',
+    },
+    sampleText: { color: theme.text, marginTop: 8 },
+    chevron: { fontSize: 22, color: theme.textMuted, lineHeight: 24 },
+    stepper: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    // 44pt: the minimum comfortable touch target on both platforms.
+    stepButton: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: theme.accentSoft,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    stepButtonDisabled: { opacity: 0.35 },
+    stepButtonText: { fontSize: 20, color: theme.accent, fontWeight: '600', lineHeight: 24 },
+    stepValue: {
+      fontSize: 17,
+      fontWeight: '600',
+      color: theme.text,
+      minWidth: 24,
+      textAlign: 'center',
+    },
+    timeText: { fontSize: 18, fontWeight: '600', color: theme.text, fontVariant: ['tabular-nums'] },
+    removeText: { color: theme.danger, fontSize: 14, fontWeight: '500' },
+    // Last thing in the sheet, hugging the gesture bar: give it a taller
+    // target and a gap from the hint above so it is not tapped by accident
+    // nor missed.
+    removeRow: { paddingVertical: 16, marginTop: 6 },
+    addRow: { paddingVertical: 12 },
+    addText: { color: theme.accent, fontSize: 16, fontWeight: '600' },
+    headerButton: { paddingHorizontal: 4, paddingVertical: 4 },
+    headerButtonText: { fontSize: 20, color: theme.text },
+    // The one action people take daily, so it carries the accent instead of
+    // the preview button that used to outshout it.
+    continueCard: {
+      backgroundColor: theme.accent,
+      borderRadius: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 18,
+      paddingVertical: 16,
+      marginBottom: 8,
+    },
+    continueLabel: { color: theme.onAccent, fontSize: 17, fontWeight: '600' },
+    continueSub: { color: theme.onAccent, fontSize: 13, marginTop: 3, opacity: 0.85 },
+    chevronOnAccent: { color: theme.onAccent },
+    linkRow: { paddingVertical: 12, alignSelf: 'flex-start' },
+    linkText: { color: theme.accent, fontSize: 15, fontWeight: '600' },
+    modalBackdrop: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    },
+    modalSheet: {
+      backgroundColor: theme.surface,
+      borderTopLeftRadius: 18,
+      borderTopRightRadius: 18,
+      paddingTop: 18,
+      paddingHorizontal: 20,
+      paddingBottom: 44,
+      maxHeight: '70%',
+    },
+    modalTitle: { fontSize: 17, fontWeight: '700', color: theme.text, marginBottom: 6 },
+    modalList: { flexGrow: 0 },
+    modalRow: {
+      paddingVertical: 13,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: theme.border,
+    },
+    modalRowLabel: { fontSize: 16, fontWeight: '600', color: theme.text },
+    modalRowSub: { fontSize: 13, color: theme.textMuted, marginTop: 2 },
+  });
+}

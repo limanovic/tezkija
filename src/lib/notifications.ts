@@ -1,0 +1,386 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as IntentLauncher from 'expo-intent-launcher';
+import * as Notifications from 'expo-notifications';
+import { Linking, Platform } from 'react-native';
+import { AyahRow, TOTAL_AYAHS, getTranslationsByIdRange } from './db';
+import { applyUiLanguage, t } from './i18n';
+import {
+  PassageKey,
+  buildPassage,
+  buildPassageAt,
+  formatReference,
+  pageOfAyah,
+} from './passage';
+import { Delivery, Settings, notificationLanguages } from './settings';
+import { advance, loadCursor, saveCursor } from './wird';
+
+/*
+ * Scheduling model — rolling window with pre-committed random picks.
+ *
+ * Local notifications freeze their content at scheduling time, and iOS caps
+ * pending local notifications at 64. A single repeating "daily at 09:00"
+ * trigger would therefore show the same passage forever. Instead, every
+ * future (day × delivery-time) occurrence is scheduled as an independent
+ * one-shot: the random passage is picked *now*, its text is baked into the
+ * notification content, and a ledger entry records which passage belongs to
+ * which occurrence so the Reader can reproduce it exactly.
+ *
+ * We keep at most MAX_PENDING (< 64, with headroom) one-shots queued. On
+ * every app launch and foreground we prune past ledger entries and top the
+ * window back up. If the user doesn't open the app for weeks the queue
+ * eventually drains — OS-level guarantees for very long dormancy vary, and
+ * the top-up-on-open pattern is the pragmatic fix for a personal app.
+ *
+ * Occurrences are scheduled nearest-first, so a run cut short by the app being
+ * backgrounded still leaves the imminent reminders queued; the next foreground
+ * fills in the tail.
+ */
+
+export type LedgerEntry = {
+  notificationId: string;
+  dateISO: string; // 'YYYY-MM-DD' local calendar day
+  time: string; // 'HH:mm'
+  passageKey: PassageKey;
+  // Where the shared wird cursor lands once this occurrence has fired. Set only
+  // for passages taken in order — a random pick must never move the cursor.
+  // Stored rather than recomputed because a page-sized passage's end is a
+  // database lookup, and settling has to work from the ledger alone.
+  nextCursor?: number;
+};
+
+const LEDGER_KEY = 'ledger.v1';
+const EXACT_PROMPT_KEY = 'exactAlarmPrompt.dismissed.v1';
+const AUTOSTART_PROMPT_KEY = 'autostartPrompt.dismissed.v1';
+const MAX_PENDING = 60;
+// Android freezes a channel's importance at creation time — later
+// setNotificationChannelAsync calls with the same id can't raise it. The `-v2`
+// suffix exists because the original channel shipped at DEFAULT importance,
+// which puts the reminder silently in the shade instead of on screen.
+const ANDROID_CHANNEL_ID = 'daily-quran-v2';
+const LEGACY_ANDROID_CHANNEL_IDS = ['daily-quran'];
+
+export function configureNotificationHandling(): void {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+}
+
+export async function ensureAndroidChannel(): Promise<void> {
+  if (Platform.OS !== 'android') return;
+  await Notifications.setNotificationChannelAsync(ANDROID_CHANNEL_ID, {
+    // HIGH so the reminder surfaces as a heads-up banner. At DEFAULT it lands
+    // in the shade only, which reads as "no notification arrived" to anyone
+    // who doesn't pull the shade down at that moment.
+    name: t('channelName'),
+    importance: Notifications.AndroidImportance.HIGH,
+    sound: undefined,
+  });
+  await Promise.all(
+    LEGACY_ANDROID_CHANNEL_IDS.map((id) =>
+      Notifications.deleteNotificationChannelAsync(id).catch(() => {}),
+    ),
+  );
+}
+
+/**
+ * Android 12+ gates exact alarms behind SCHEDULE_EXACT_ALARM, and Android 14+
+ * denies it by default. Without it a scheduled passage still arrives — the OS
+ * batches it, landing a few minutes off the requested time.
+ */
+export { canScheduleExactAlarms, openExactAlarmSettings } from '../../modules/exact-alarms';
+
+/**
+ * The exact-alarm offer is a nicety, not a gate — reminders still arrive
+ * without it. Once dismissed it stays dismissed; Settings keeps the row.
+ */
+export async function isExactAlarmPromptDismissed(): Promise<boolean> {
+  return (await AsyncStorage.getItem(EXACT_PROMPT_KEY)) === '1';
+}
+
+export async function dismissExactAlarmPrompt(): Promise<void> {
+  await AsyncStorage.setItem(EXACT_PROMPT_KEY, '1');
+}
+
+export { getManufacturer, needsAutostartSetup, openAutostartSettings } from '../../modules/exact-alarms';
+
+/**
+ * Autostart cannot be read back — the app can never tell whether the user
+ * flipped it, so the prompt can't hide itself the way the exact-alarm one
+ * does. Dismissal is the user saying "done"; Settings keeps the row after.
+ */
+export async function isAutostartPromptDismissed(): Promise<boolean> {
+  return (await AsyncStorage.getItem(AUTOSTART_PROMPT_KEY)) === '1';
+}
+
+export async function dismissAutostartPrompt(): Promise<void> {
+  await AsyncStorage.setItem(AUTOSTART_PROMPT_KEY, '1');
+}
+
+/**
+ * Battery optimisation (and OEM "put app to sleep" features built on top of
+ * it) suspends the alarm entirely while the phone is idle — the overnight
+ * case where a morning reminder never fires at all.
+ */
+export async function openBatteryOptimizationSettings(): Promise<void> {
+  if (Platform.OS !== 'android') return;
+  try {
+    await IntentLauncher.startActivityAsync(
+      'android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS',
+    );
+  } catch {
+    await Linking.openSettings().catch(() => {});
+  }
+}
+
+export async function getPermissionGranted(): Promise<boolean> {
+  const { status } = await Notifications.getPermissionsAsync();
+  return status === 'granted';
+}
+
+export async function requestPermission(): Promise<boolean> {
+  const { status } = await Notifications.requestPermissionsAsync();
+  return status === 'granted';
+}
+
+export async function loadLedger(): Promise<LedgerEntry[]> {
+  const raw = await AsyncStorage.getItem(LEDGER_KEY);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw) as LedgerEntry[];
+  } catch {
+    return [];
+  }
+}
+
+async function saveLedger(ledger: LedgerEntry[]): Promise<void> {
+  await AsyncStorage.setItem(LEDGER_KEY, JSON.stringify(ledger));
+}
+
+function toDateISO(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * Local wall-clock Date for an occurrence. Built from calendar components,
+ * not UTC offsets, so 09:00 stays 09:00 across DST transitions.
+ */
+function occurrenceDate(dateISO: string, time: string): Date {
+  const [y, m, d] = dateISO.split('-').map(Number);
+  const [hh, mm] = time.split(':').map(Number);
+  return new Date(y, m - 1, d, hh, mm, 0, 0);
+}
+
+function occurrenceKey(e: { dateISO: string; time: string }): string {
+  return `${e.dateISO} ${e.time}`;
+}
+
+function byOccurrence(a: LedgerEntry, b: LedgerEntry): number {
+  return occurrenceDate(a.dateISO, a.time).getTime() - occurrenceDate(b.dateISO, b.time).getTime();
+}
+
+/**
+ * Move the shared wird cursor past the occurrences that have already fired, and
+ * drop those entries from the ledger. This is the only place the cursor
+ * advances: a wird moves on because its portion was delivered, not merely
+ * because a notification was queued. Entries are applied in chronological
+ * order, so the last in-order one to fire is where the wird now stands.
+ */
+async function settleElapsed(now: Date): Promise<LedgerEntry[]> {
+  const stored = await loadLedger();
+  const pending = stored.filter((e) => occurrenceDate(e.dateISO, e.time) > now);
+  if (pending.length === stored.length) return pending;
+
+  const elapsed = stored.filter((e) => occurrenceDate(e.dateISO, e.time) <= now).sort(byOccurrence);
+  const settled = elapsed.filter((e) => e.nextCursor !== undefined).pop();
+  if (settled?.nextCursor !== undefined) await saveCursor(settled.nextCursor);
+  await saveLedger(pending);
+  return pending;
+}
+
+/**
+ * Notification body: the passage in each chosen language, one block per
+ * language in the user's order. Arabic only when asked for (or when nothing
+ * else is shown) — it renders poorly in OS notifications.
+ */
+async function buildBody(rows: AyahRow[], settings: Settings): Promise<string> {
+  const langs = notificationLanguages(settings);
+  const arabic = () => rows.map((r) => r.arabic).join(' ');
+  let blocks: string[] = [];
+  if (rows.length > 0) {
+    const codes = langs.filter((c) => c !== 'ar');
+    const map =
+      codes.length > 0
+        ? await getTranslationsByIdRange(codes, rows[0].id, rows[rows.length - 1].id)
+        : {};
+    blocks = langs
+      .map((lang) =>
+        lang === 'ar' ? arabic() : rows.map((r) => map[lang]?.[r.id] ?? '').join(' ').trim(),
+      )
+      .filter((block) => block.length > 0);
+  }
+  const text = blocks.length > 0 ? blocks.join('\n\n') : arabic();
+  // Android renders long bodies via BigText-style expansion; iOS truncates in
+  // the banner and expands on long-press. Cap defensively anyway.
+  return text.length > 2000 ? `${text.slice(0, 2000)}…` : text;
+}
+
+/**
+ * `cursor` present means this delivery is in order and resumes from that ayah.
+ * A page-sized delivery starts at the page that ayah falls on, and leaves the
+ * cursor just past that page range's last ayah — so ayah- and page-sized
+ * readings stay on one progression.
+ */
+async function scheduleOccurrence(
+  dateISO: string,
+  delivery: Delivery,
+  settings: Settings,
+  cursor?: number,
+): Promise<LedgerEntry> {
+  let passage: Awaited<ReturnType<typeof buildPassage>>;
+  let nextCursor: number | undefined;
+  if (cursor === undefined) {
+    passage = await buildPassage(delivery.unit, delivery.count);
+  } else if (delivery.unit === 'ayah') {
+    passage = await buildPassageAt('ayah', delivery.count, cursor);
+    nextCursor = advance(cursor, passage.passageKey.count, TOTAL_AYAHS);
+  } else {
+    passage = await buildPassageAt('page', delivery.count, await pageOfAyah(cursor));
+    const lastId = passage.rows[passage.rows.length - 1]?.id ?? cursor;
+    nextCursor = advance(lastId, 1, TOTAL_AYAHS);
+  }
+  const { rows, passageKey } = passage;
+  const title = await formatReference(rows, passageKey);
+  const notificationId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title,
+      body: await buildBody(rows, settings),
+      data: { passageKey },
+      sound: false,
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: occurrenceDate(dateISO, delivery.time),
+      channelId: ANDROID_CHANNEL_ID,
+    },
+  });
+  return {
+    notificationId,
+    dateISO,
+    time: delivery.time,
+    passageKey,
+    ...(nextCursor !== undefined && { nextCursor }),
+  };
+}
+
+// Scheduling operations mutate the ledger and the OS notification queue, so
+// concurrent runs (e.g. two quick settings changes) must not interleave —
+// serialize them through this promise chain.
+let scheduleChain: Promise<LedgerEntry[]> = Promise.resolve([]);
+
+const ledgerListeners = new Set<(ledger: LedgerEntry[]) => void>();
+
+/** Subscribe to ledger updates (fires after every top-up/rebuild). Returns unsubscribe. */
+export function onLedgerChange(listener: (ledger: LedgerEntry[]) => void): () => void {
+  ledgerListeners.add(listener);
+  return () => ledgerListeners.delete(listener);
+}
+
+function enqueue(op: () => Promise<LedgerEntry[]>): Promise<LedgerEntry[]> {
+  scheduleChain = scheduleChain.then(op, op).then((ledger) => {
+    ledgerListeners.forEach((l) => l(ledger));
+    return ledger;
+  });
+  return scheduleChain;
+}
+
+/**
+ * Prune past ledger entries and schedule forward until the window is full.
+ * Called on app launch and on every foreground. Safe to call repeatedly.
+ */
+export function topUpSchedule(settings: Settings): Promise<LedgerEntry[]> {
+  return enqueue(() => topUpScheduleInner(settings));
+}
+
+async function topUpScheduleInner(settings: Settings): Promise<LedgerEntry[]> {
+  // No times set: the user has turned notifications off from inside the app.
+  // Clear anything still pending — and note the horizon maths below would
+  // divide by zero and loop forever on an empty list.
+  if (settings.deliveries.length === 0) {
+    // Settle before discarding: portions already delivered still count, so a
+    // wird resumed later picks up where it stopped rather than repeating.
+    await settleElapsed(new Date());
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    await saveLedger([]);
+    return [];
+  }
+  if (!(await getPermissionGranted())) return loadLedger();
+  // Notification titles/bodies bake in text at scheduling time — make sure
+  // they are built in the language these settings ask for.
+  applyUiLanguage(settings);
+  await ensureAndroidChannel();
+
+  const now = new Date();
+  const ledger = await settleElapsed(now);
+  const scheduled = new Set(ledger.map(occurrenceKey));
+
+  // Where the in-order progression stands, then where the still-pending
+  // notifications have already carried it. The walk is in memory only — none of
+  // it is committed until those occurrences elapse, so cancelling the window and
+  // rebuilding it lands on the same passages.
+  const cursor = await loadCursor();
+  const claimed = [...ledger]
+    .sort(byOccurrence)
+    .filter((e) => e.nextCursor !== undefined)
+    .pop();
+  let walk = claimed?.nextCursor ?? cursor;
+
+  // Fill the window: N days × deliveries/day, never exceeding MAX_PENDING total.
+  const horizonDays = Math.max(1, Math.floor(MAX_PENDING / settings.deliveries.length));
+  outer: for (let offset = 0; offset < horizonDays; offset++) {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
+    const dateISO = toDateISO(day);
+    for (const delivery of settings.deliveries) {
+      if (ledger.length >= MAX_PENDING) break outer;
+      if (occurrenceDate(dateISO, delivery.time) <= now) continue; // today's already-past times
+      if (scheduled.has(occurrenceKey({ dateISO, time: delivery.time }))) continue;
+      // Deliveries are visited in clock order within each day, so several
+      // in-order times split one continuous reading across the day.
+      const entry = await scheduleOccurrence(
+        dateISO,
+        delivery,
+        settings,
+        delivery.mode === 'sequential' ? walk : undefined,
+      );
+      if (entry.nextCursor !== undefined) walk = entry.nextCursor;
+      ledger.push(entry);
+      scheduled.add(occurrenceKey(entry));
+    }
+  }
+
+  ledger.sort(byOccurrence);
+  await saveLedger(ledger);
+  return ledger;
+}
+
+/**
+ * Settings changed: throw away every pending pick and rebuild the whole
+ * window with the new unit/count/times/translations.
+ */
+export function rebuildSchedule(settings: Settings): Promise<LedgerEntry[]> {
+  return enqueue(async () => {
+    // The ledger is about to go, and with it the record of which portions have
+    // already been delivered — bank that into the cursors before it does.
+    await settleElapsed(new Date());
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    await AsyncStorage.removeItem(LEDGER_KEY);
+    return topUpScheduleInner(settings);
+  });
+}
