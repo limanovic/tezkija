@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AyahRow, LanguageRow, SurahRow, TranslationMap } from '@/lib/db';
 import { useT } from '@/lib/i18n';
+import { displayArabic } from '@/lib/mushaf';
 import { Settings } from '@/lib/settings';
 import { Theme, useTheme } from '@/lib/theme';
 
@@ -75,7 +76,7 @@ function AyahBlockInner({
         </View>
         {settings.showArabic && (
           <Text style={styles.arabic}>
-            {row.arabic} {ayahMark(row.ayah)}
+            {displayArabic(row.arabic)} {ayahMark(row.ayah)}
           </Text>
         )}
         {settings.translations.map((code) => {

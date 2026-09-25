@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+  svg { display: block; width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<!-- Themed-icon layer: flat silhouette, the system supplies the tint. Same safe zone as the foreground. -->
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path id="petal" d="M256 112 C 294 154, 294 214, 256 256 C 218 214, 218 154, 256 112 Z"/>
+  </defs>
+  <g fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round">
+    <use href="#petal"/>
+    <use href="#petal" transform="rotate(45 256 256)"/>
+    <use href="#petal" transform="rotate(90 256 256)"/>
+    <use href="#petal" transform="rotate(135 256 256)"/>
+    <use href="#petal" transform="rotate(180 256 256)"/>
+    <use href="#petal" transform="rotate(225 256 256)"/>
+    <use href="#petal" transform="rotate(270 256 256)"/>
+    <use href="#petal" transform="rotate(315 256 256)"/>
+  </g>
+  <circle cx="256" cy="256" r="25" fill="none" stroke="#FFFFFF" stroke-width="14"/>
+  <circle cx="256" cy="256" r="8" fill="#FFFFFF"/>
+</svg>
+</body>
+</html>

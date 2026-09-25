@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 import { GuidanceRow, TOTAL_GUIDANCE, getTranslationsByIds } from './db';
 import { applyUiLanguage, t } from './i18n';
+import { displayArabic } from './mushaf';
 import { PassageKey, buildPassage, buildPassageAt, formatReference } from './passage';
 import { Delivery, Settings, notificationLanguages } from './settings';
 import { advance, loadCursor, saveCursor } from './wird';
@@ -203,7 +204,7 @@ async function settleElapsed(now: Date): Promise<LedgerEntry[]> {
  */
 async function buildBody(rows: GuidanceRow[], settings: Settings): Promise<string> {
   const langs = notificationLanguages(settings);
-  const arabic = () => rows.map((r) => r.arabic).join(' ');
+  const arabic = () => rows.map((r) => displayArabic(r.arabic)).join(' ');
   let blocks: string[] = [];
   if (rows.length > 0) {
     const codes = langs.filter((c) => c !== 'ar');

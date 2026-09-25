@@ -5,6 +5,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bookmark, loadBookmarks, removeBookmark } from '@/lib/bookmarks';
 import { GuidanceRow, SurahRow, getGuidanceByAyahIds, getSurahs } from '@/lib/db';
 import { useT } from '@/lib/i18n';
+import { displayArabic } from '@/lib/mushaf';
 import { Theme, useTheme } from '@/lib/theme';
 
 type Item = Bookmark & { row?: GuidanceRow; surah?: SurahRow };
@@ -74,7 +75,7 @@ export default function BookmarksScreen() {
             </Text>
             {item.row && (
               <Text style={styles.snippet} numberOfLines={1}>
-                {item.row.arabic}
+                {displayArabic(item.row.arabic)}
               </Text>
             )}
             <Text style={styles.date}>{new Date(item.createdAt).toLocaleDateString()}</Text>

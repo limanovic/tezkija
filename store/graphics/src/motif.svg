@@ -1,0 +1,26 @@
+<!--
+  Reference only — the HTML files inline their own copy of this motif.
+
+  An eight-petal rosette: a flower opening, for a word whose root means both
+  "to purify" and "to grow". Eight petals as a nod to the eight-pointed
+  geometry that runs through mushaf ornament, without reusing Daily Qur'an's
+  Rub el Hizb. Petals are pointed ellipses on a 45° grid around the centre,
+  outlined in manuscript gold; a ring and a dot at the heart.
+
+  Coordinates for a 512 canvas centred on (256,256). Petal tip radius 150 —
+  inside the 156px adaptive-icon safe radius when drawn at this size.
+-->
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#C8A64A" stroke-width="14" stroke-linejoin="round">
+    <path id="petal" d="M256 106 C 296 150, 296 214, 256 256 C 216 214, 216 150, 256 106 Z"/>
+    <use href="#petal" transform="rotate(45 256 256)"/>
+    <use href="#petal" transform="rotate(90 256 256)"/>
+    <use href="#petal" transform="rotate(135 256 256)"/>
+    <use href="#petal" transform="rotate(180 256 256)"/>
+    <use href="#petal" transform="rotate(225 256 256)"/>
+    <use href="#petal" transform="rotate(270 256 256)"/>
+    <use href="#petal" transform="rotate(315 256 256)"/>
+  </g>
+  <circle cx="256" cy="256" r="30" fill="none" stroke="#C8A64A" stroke-width="14"/>
+  <circle cx="256" cy="256" r="8" fill="#C8A64A"/>
+</svg>

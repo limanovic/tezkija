@@ -96,8 +96,8 @@ not the debug key:
 keytool -printcert -jarfile android/app/build/outputs/bundle/release/app-release.aab
 ```
 
-Expected owner: whatever the Tezkija upload key was generated with — record
-it here once the key exists (this app must not reuse the Daily Qur’an key).
+Expected owner: `CN=Tezkija, OU=Mobile, O=limanovic, C=BA`.
+Expected SHA-256: `14:00:51:A3:77:C1:40:A6:86:92:FD:9E:D2:C2:1A:03:B3:6D:12:54:09:D5:78:B5:C1:60:24:5B:3E:98:ED:FB`
 
 If the owner comes back as `CN=Android Debug`, the signing plugin didn't run —
 see below.

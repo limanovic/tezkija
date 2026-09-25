@@ -68,6 +68,7 @@ const en = {
   meccan: 'Meccan',
   medinan: 'Medinan',
   ayahsCount: '{n} ayahs',
+  ayahsCountOne: '{n} ayah',
   bookmark: 'Bookmark',
   bookmarked: 'Bookmarked',
   channelName: 'Daily ayahs',
@@ -153,6 +154,7 @@ const bs: Strings = {
   meccan: 'Mekkanska',
   medinan: 'Medinska',
   ayahsCount: '{n} ajeta',
+  ayahsCountOne: '{n} ajet',
   bookmark: 'Zabilježi',
   bookmarked: 'Zabilježeno',
   channelName: 'Dnevni ajeti',
@@ -212,12 +214,26 @@ function format(template: string, params?: Record<string, string | number>): str
   );
 }
 
+/**
+ * Singular form for a count. English: exactly 1. Bosnian: 1, 21, 31 … but not
+ * 11 ("1 ajet", "21 ajet", "11 ajeta"); 2–4 and 5+ share the same form here.
+ */
+function isSingular(lang: string, n: number): boolean {
+  return lang === 'bs' ? n % 10 === 1 && n % 100 !== 11 : n === 1;
+}
+
 function translate(
   lang: string,
   key: UiStringKey,
   params?: Record<string, string | number>,
 ): string {
-  return format(STRINGS[lang]?.[key] ?? en[key], params);
+  const strings = STRINGS[lang] ?? en;
+  const n = params?.n;
+  const one = `${key}One` as UiStringKey;
+  if (typeof n === 'number' && one in strings && isSingular(lang, n)) {
+    return format(strings[one], params);
+  }
+  return format(strings[key] ?? en[key], params);
 }
 
 /** Translate a UI string in the current language. Safe outside React (notifications, refs). */

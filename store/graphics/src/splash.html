@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+  svg { display: block; width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<!--
+  Splash logo. Same motif as the icon with no safe zone to respect — nothing
+  crops a splash image — so the rosette runs to the edge of its canvas and
+  `imageWidth` in app.json controls the on-screen size.
+-->
+<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E4C87A"/>
+      <stop offset="48%" stop-color="#C8A64A"/>
+      <stop offset="100%" stop-color="#9C7C2C"/>
+    </linearGradient>
+    <path id="petal" d="M180 20 C 224 68, 224 134, 180 180 C 136 134, 136 68, 180 20 Z"/>
+  </defs>
+
+  <g fill="none" stroke="url(#gold)" stroke-width="12" stroke-linejoin="round">
+    <use href="#petal"/>
+    <use href="#petal" transform="rotate(45 180 180)"/>
+    <use href="#petal" transform="rotate(90 180 180)"/>
+    <use href="#petal" transform="rotate(135 180 180)"/>
+    <use href="#petal" transform="rotate(180 180 180)"/>
+    <use href="#petal" transform="rotate(225 180 180)"/>
+    <use href="#petal" transform="rotate(270 180 180)"/>
+    <use href="#petal" transform="rotate(315 180 180)"/>
+  </g>
+  <circle cx="180" cy="180" r="25" fill="none" stroke="url(#gold)" stroke-width="12"/>
+  <circle cx="180" cy="180" r="7" fill="url(#gold)"/>
+</svg>
+</body>
+</html>

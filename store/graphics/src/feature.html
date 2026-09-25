@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8">
+<style>
+  @font-face {
+    font-family: "Amiri";
+    src: url("../../../assets/fonts/Amiri-Regular.ttf") format("truetype");
+  }
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+  .canvas {
+    position: relative;
+    width: 1024px; height: 500px;
+    background: radial-gradient(120% 150% at 78% 30%, #2B4E8E 0%, #23417A 45%, #16294F 100%);
+    overflow: hidden;
+  }
+  /* Oversized motif bleeding off the right edge — decorative, never load-bearing. */
+  .motif { position: absolute; right: 24px; top: 40px; width: 420px; height: 420px; opacity: .72; }
+  .copy {
+    position: absolute; left: 76px; top: 0; height: 500px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  h1 {
+    font-family: "Amiri", Georgia, serif;
+    font-size: 88px; line-height: 1.05; margin: 0;
+    color: #F7F4EE; letter-spacing: .5px;
+  }
+  .ar {
+    font-family: "Amiri", serif; font-size: 40px; color: #C8A64A; margin: 6px 0 0 4px;
+  }
+  .rule { width: 96px; height: 3px; background: #C8A64A; margin: 22px 0 22px; border-radius: 2px; }
+  p {
+    font-family: "Amiri", Georgia, serif;
+    font-size: 30px; line-height: 1.4; margin: 0; max-width: 470px; color: #C7CEDF;
+  }
+  .tag { margin-top: 20px; font-size: 24px; color: #C8A64A; letter-spacing: 1.6px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <svg class="motif" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="petal" d="M256 76 C 304 128, 304 204, 256 256 C 208 204, 208 128, 256 76 Z"/>
+    </defs>
+    <g fill="none" stroke="#E4C87A" stroke-width="9" stroke-linejoin="round">
+      <use href="#petal"/>
+      <use href="#petal" transform="rotate(45 256 256)"/>
+      <use href="#petal" transform="rotate(90 256 256)"/>
+      <use href="#petal" transform="rotate(135 256 256)"/>
+      <use href="#petal" transform="rotate(180 256 256)"/>
+      <use href="#petal" transform="rotate(225 256 256)"/>
+      <use href="#petal" transform="rotate(270 256 256)"/>
+      <use href="#petal" transform="rotate(315 256 256)"/>
+    </g>
+    <circle cx="256" cy="256" r="34" fill="none" stroke="#E4C87A" stroke-width="9"/>
+    <circle cx="256" cy="256" r="9" fill="#C8A64A"/>
+  </svg>
+
+  <div class="copy">
+    <h1>Tezkija</h1>
+    <div class="ar">تزكية</div>
+    <div class="rule"></div>
+    <p>Ajeti Kur’ana o ponašanju, svaki dan — da se čitaju i žive.</p>
+    <div class="tag">Offline · Privatno · Besplatno</div>
+  </div>
+</div>
+</body>
+</html>
