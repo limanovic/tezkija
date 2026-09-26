@@ -164,8 +164,8 @@ The same code exports as a static site that installs to a phone's home
 screen — the iPhone route, since there is no App Store build.
 
 ```sh
-npm run web:export      # → dist/
-npx serve dist          # try it locally
+npm run web:export      # → web-build/ (dist/ is where release APKs are kept)
+npx serve web-build     # try it locally
 ```
 
 What differs from native, all behind platform files (`*.web.ts`):
@@ -189,7 +189,7 @@ What differs from native, all behind platform files (`*.web.ts`):
 ### Deploying to Vercel
 
 New project from this repo. Build command `npm run web:export`, output
-directory `dist`, environment variables `EXPO_PUBLIC_SUPABASE_URL` and
+directory `web-build`, environment variables `EXPO_PUBLIC_SUPABASE_URL` and
 `EXPO_PUBLIC_SUPABASE_ANON_KEY`. `vercel.json` turns on clean URLs (so
 `/reader` serves `reader.html`) and sets cache headers. Add the domain under
 Domains and point a CNAME at it from the DNS host.
