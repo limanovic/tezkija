@@ -69,7 +69,7 @@ function subscribe(listener: () => void): () => void {
 
 export function useTheme(): Theme {
   const system = useColorScheme();
-  const pref = useSyncExternalStore(subscribe, getPreference);
+  const pref = useSyncExternalStore(subscribe, getPreference, getPreference);
   const scheme = pref === "system" ? system : pref;
   return scheme === "dark" ? darkTheme : lightTheme;
 }

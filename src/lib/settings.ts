@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as store from './store';
 import { ThemePreference } from './theme';
 
 /**
@@ -13,6 +13,20 @@ export type Delivery = {
   time: string; // 'HH:mm' 24h wall-clock
   count: number; // guidance ayahs for this delivery
   mode: WirdMode;
+};
+
+/**
+ * What an Arapski delivery sends. 'lesson' is the lesson the cursor stands on
+ * — the same one again until it is finished, which is the point; 'review' is
+ * up to `count` words due for repetition; 'word' is `count` frequent words not
+ * yet known, each with its meaning and one ayah.
+ */
+export type ArabicDeliveryKind = 'lesson' | 'review' | 'word';
+
+export type ArabicDelivery = {
+  time: string; // 'HH:mm' 24h wall-clock
+  kind: ArabicDeliveryKind;
+  count: number; // words, for 'review' and 'word'
 };
 
 /** Codes present in the bundled database ('ar' excluded — that's showArabic). */
@@ -35,6 +49,10 @@ export type Settings = {
    * here, unlike `translations`, since it's the whole text for some.
    */
   notificationLanguages: string[] | null;
+  /** Arapski deliveries; unique times, sorted. Shares the notification window with `deliveries`. */
+  arabicDeliveries: ArabicDelivery[];
+  /** Show the Latin transliteration under Arabic headwords. */
+  showTranslit: boolean;
 };
 
 const SETTINGS_KEY = 'settings.v1';
@@ -47,6 +65,8 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
   uiLanguage: 'auto',
   notificationLanguages: null,
+  arabicDeliveries: [],
+  showTranslit: true,
 };
 
 /** Reader text size range, as a multiplier on the base font sizes. */
@@ -71,14 +91,33 @@ function normalizeDelivery(d: Partial<Delivery>): Delivery {
   return { time: d.time ?? '', count, mode };
 }
 
+const ARABIC_KINDS: ArabicDeliveryKind[] = ['lesson', 'review', 'word'];
+
+function normalizeArabicDelivery(d: Partial<ArabicDelivery>): ArabicDelivery {
+  const { min, max } = COUNT_BOUNDS;
+  const count = Math.min(max, Math.max(min, Math.round(d.count ?? min) || min));
+  const kind = ARABIC_KINDS.includes(d.kind as ArabicDeliveryKind) ? (d.kind as ArabicDeliveryKind) : 'lesson';
+  return { time: d.time ?? '', kind, count };
+}
+
+/** Keep well-formed, unique times in clock order. */
+function uniqueTimes<T extends { time: string }>(list: unknown): T[] {
+  const seen = new Set<string>();
+  return (Array.isArray(list) ? (list as T[]) : [])
+    .filter((d) => TIME_RE.test(d.time) && !seen.has(d.time) && (seen.add(d.time), true))
+    .sort((a, b) => a.time.localeCompare(b.time));
+}
+
 /** Clamp/repair a settings object so the rest of the app can trust it. */
 export function normalizeSettings(raw: Partial<Settings> | null | undefined): Settings {
   const s: Settings = { ...DEFAULT_SETTINGS, ...(raw ?? {}) };
-  const seen = new Set<string>();
-  s.deliveries = (Array.isArray(s.deliveries) ? s.deliveries : [])
-    .map(normalizeDelivery)
-    .filter((d) => TIME_RE.test(d.time) && !seen.has(d.time) && (seen.add(d.time), true))
-    .sort((a, b) => a.time.localeCompare(b.time));
+  s.deliveries = uniqueTimes(
+    (Array.isArray(s.deliveries) ? s.deliveries : []).map(normalizeDelivery),
+  );
+  s.arabicDeliveries = uniqueTimes(
+    (Array.isArray(s.arabicDeliveries) ? s.arabicDeliveries : []).map(normalizeArabicDelivery),
+  );
+  s.showTranslit = s.showTranslit !== false;
   // An empty list is a valid choice: it's how a user turns notifications off
   // from inside the app. Fresh installs still start from DEFAULT_SETTINGS.
   const known = new Set<string>(TRANSLATION_CODES);
@@ -118,7 +157,7 @@ export function notificationLanguages(settings: Settings): string[] {
 }
 
 export async function loadSettings(): Promise<Settings> {
-  const raw = await AsyncStorage.getItem(SETTINGS_KEY);
+  const raw = await store.getItem(SETTINGS_KEY);
   if (!raw) return { ...DEFAULT_SETTINGS };
   try {
     return normalizeSettings(JSON.parse(raw));
@@ -129,6 +168,6 @@ export async function loadSettings(): Promise<Settings> {
 
 export async function saveSettings(settings: Settings): Promise<Settings> {
   const normalized = normalizeSettings(settings);
-  await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(normalized));
+  await store.setItem(SETTINGS_KEY, JSON.stringify(normalized));
   return normalized;
 }

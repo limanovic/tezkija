@@ -1,8 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as store from './store';
 
 /**
- * Bookmarks and the automatic last-read position. Both are plain AsyncStorage
- * values — the SQLite database stays read-only.
+ * Bookmarks and the automatic last-read position. Both are plain key-value
+ * store entries (lib/store) — the SQLite database stays read-only.
  */
 
 export type Bookmark = {
@@ -15,7 +15,7 @@ const LAST_POSITION_KEY = 'lastPosition.v1';
 
 /** All bookmarks, newest first. */
 export async function loadBookmarks(): Promise<Bookmark[]> {
-  const raw = await AsyncStorage.getItem(BOOKMARKS_KEY);
+  const raw = await store.getItem(BOOKMARKS_KEY);
   if (!raw) return [];
   try {
     const list = JSON.parse(raw) as Bookmark[];
@@ -28,7 +28,7 @@ export async function loadBookmarks(): Promise<Bookmark[]> {
 }
 
 async function saveBookmarks(bookmarks: Bookmark[]): Promise<void> {
-  await AsyncStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
+  await store.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
 }
 
 /** Add the ayah if absent, remove it if present. Returns the new list. */
@@ -51,11 +51,11 @@ export async function removeBookmark(ayahId: number): Promise<Bookmark[]> {
 
 /** Where the user last was in the full list (guidance ordinal, 1..340). */
 export async function loadLastPosition(): Promise<number | null> {
-  const raw = await AsyncStorage.getItem(LAST_POSITION_KEY);
+  const raw = await store.getItem(LAST_POSITION_KEY);
   const n = raw ? Number(raw) : NaN;
   return Number.isInteger(n) && n >= 1 ? n : null;
 }
 
 export async function saveLastPosition(ordinal: number): Promise<void> {
-  await AsyncStorage.setItem(LAST_POSITION_KEY, String(ordinal));
+  await store.setItem(LAST_POSITION_KEY, String(ordinal));
 }

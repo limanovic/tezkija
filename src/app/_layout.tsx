@@ -1,5 +1,4 @@
 import { useFonts } from 'expo-font';
-import * as Notifications from 'expo-notifications';
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -7,18 +6,42 @@ import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
 import { applyUiLanguage, useT } from '@/lib/i18n';
-import { configureNotificationHandling, topUpSchedule } from '@/lib/notifications';
-import { PassageKey } from '@/lib/passage';
+import {
+  NotificationPayload,
+  clearLastTap,
+  configureNotificationHandling,
+  rebuildSchedule,
+  subscribeToTaps,
+  topUpSchedule,
+} from '@/lib/notifications';
 import { loadSettings } from '@/lib/settings';
+import { startSync } from '@/lib/sync';
 import { setThemePreference, useTheme } from '@/lib/theme';
 
 SplashScreen.preventAutoHideAsync();
 
 configureNotificationHandling();
 
-function passageKeyParam(response: Notifications.NotificationResponse): string | null {
-  const key = response.notification.request.content.data?.passageKey as PassageKey | undefined;
-  return key ? JSON.stringify(key) : null;
+type Target = { pathname: '/reader' | '/lesson' | '/quiz'; params: Record<string, string> };
+
+/**
+ * Where a notification tap lands: a passage in the Reader, the lesson, or a
+ * quiz over the words it carried. A word-of-the-day opens as lesson cards,
+ * so the example ayah is there to read.
+ */
+function targetFor(data: NotificationPayload | undefined): Target | null {
+  if (!data) return null;
+  if (data.passageKey) return { pathname: '/reader', params: { key: JSON.stringify(data.passageKey) } };
+  if (data.kind === 'lesson' && data.lessonId !== undefined) {
+    return { pathname: '/lesson', params: { id: String(data.lessonId) } };
+  }
+  if ((data.kind === 'review' || data.kind === 'word') && data.lemmaIds?.length) {
+    const lemmas = data.lemmaIds.join(',');
+    return data.kind === 'review'
+      ? { pathname: '/quiz', params: { lemmas } }
+      : { pathname: '/lesson', params: { lemmas } };
+  }
+  return null;
 }
 
 export default function RootLayout() {
@@ -42,31 +65,23 @@ export default function RootLayout() {
   // mounted throws, and from inside the response listener that throw is a fatal
   // JS error — the "app closed" a tap produced whenever the notification
   // arrived before fonts and preferences had finished loading.
-  const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const [pending, setPending] = useState<Target | null>(null);
   const handledResponse = useRef<string | null>(null);
 
-  useEffect(() => {
-    // The cold-start response is also replayed to the listener, so both paths
-    // can report the same tap — take it once.
-    const record = (response: Notifications.NotificationResponse) => {
-      const id = response.notification.request.identifier;
-      if (handledResponse.current === id) return;
-      handledResponse.current = id;
-      const key = passageKeyParam(response);
-      if (key) setPendingKey(key);
-    };
-    // Cold start: the app may have been launched by a notification tap.
-    Notifications.getLastNotificationResponseAsync()
-      .then((response) => {
-        if (response) record(response);
-      })
-      .catch(() => {});
-    const sub = Notifications.addNotificationResponseReceivedListener(record);
-    return () => sub.remove();
-  }, []);
+  useEffect(
+    () =>
+      subscribeToTaps((id, data) => {
+        // The cold-start tap is reported twice (see subscribeToTaps) — take it once.
+        if (handledResponse.current === id) return;
+        handledResponse.current = id;
+        const target = targetFor(data);
+        if (target) setPending(target);
+      }),
+    [],
+  );
 
   useEffect(() => {
-    if (!ready || !pendingKey) return;
+    if (!ready || !pending) return;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     // `ready` means this component is rendering the Stack, not that the
@@ -75,8 +90,8 @@ export default function RootLayout() {
     const go = () => {
       if (cancelled) return;
       try {
-        router.push({ pathname: '/reader', params: { key: pendingKey } });
-        setPendingKey(null);
+        router.push(pending);
+        setPending(null);
       } catch {
         timer = setTimeout(go, 50);
       }
@@ -86,14 +101,14 @@ export default function RootLayout() {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [ready, pendingKey]);
+  }, [ready, pending]);
 
-  // The OS module remembers the last response until it is cleared, so without
-  // this every later cold start would reopen the Reader on a stale passage.
+  // Once a tap has been acted on, forget it, or the next cold start would
+  // reopen the Reader on the same stale passage.
   useEffect(() => {
-    if (pendingKey !== null || handledResponse.current === null) return;
-    Notifications.clearLastNotificationResponseAsync?.().catch(() => {});
-  }, [pendingKey]);
+    if (pending !== null || handledResponse.current === null) return;
+    clearLastTap();
+  }, [pending]);
 
   // Apply the saved theme and language preferences before the first frame is
   // shown — navigator headers keep the title they mount with, so the language
@@ -116,6 +131,25 @@ export default function RootLayout() {
     });
     return () => sub.remove();
   }, []);
+
+  // Account sync. Screens re-read their own state through useSyncVersion;
+  // the settings that live outside React state are re-applied here, and the
+  // notification window rebuilt since the pulled cursor or times may differ.
+  useEffect(
+    () =>
+      startSync((changed) => {
+        loadSettings()
+          .then((s) => {
+            if (changed.includes('settings.v1')) {
+              setThemePreference(s.theme);
+              applyUiLanguage(s);
+            }
+            return rebuildSchedule(s);
+          })
+          .catch(() => {});
+      }),
+    [],
+  );
 
   if (!ready) return null;
 
@@ -140,6 +174,10 @@ export default function RootLayout() {
         <Stack.Screen name="surahs" options={{ title: t('surahs') }} />
         <Stack.Screen name="bookmarks" options={{ title: t('bookmarks') }} />
         <Stack.Screen name="settings" options={{ title: t('settings') }} />
+        <Stack.Screen name="account" options={{ title: t('account') }} />
+        <Stack.Screen name="lesson" options={{ title: '' }} />
+        <Stack.Screen name="quiz" options={{ title: t('quiz') }} />
+        <Stack.Screen name="progress" options={{ title: t('progressTitle') }} />
       </Stack>
     </>
   );

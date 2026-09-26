@@ -1,28 +1,25 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as store from './store';
 import { TOTAL_GUIDANCE } from './db';
 
 /*
  * How far the in-order reading has got: the guidance ayah (by ordinal, 1..340)
- * its *next* in-order delivery starts from.
+ * every in-order delivery starts from.
  *
- * There is one position, not one per delivery time. Every time set to "in
- * order" draws from it, in clock order — 09:00 takes #1, 10:00 takes #2,
- * 14:00 takes #3 — so several readings a day are one continuous pass through
- * the set rather than several parallel ones all starting at 2:42. A time set
- * to "random" never touches it, which is how a delivery opts out.
+ * The cursor never moves on its own. An in-order time sends the same ayah
+ * again and again until it is ticked as practised — the idea being that an
+ * ayah is read until it has become habit, then the next one. Ticks are kept
+ * as a set of ordinals (`guidance.done.v1`); ticking the ayah under the
+ * cursor moves the cursor to the next unticked one. Random times ignore all
+ * of this and pick freely.
  *
- * Kept out of Settings on purpose. The scheduler advances it as occurrences
- * elapse, while Settings is held in React state on two screens — a screen that
- * loaded before an advance would write the stale position back on the next
- * unrelated edit and re-deliver passages the user already had.
- *
- * It moves only when an occurrence has actually passed. Pending notifications
- * bake their passage in at scheduling time, but the positions they consume are
- * walked over in memory (see notifications.ts) and never stored, so cancelling
- * and rebuilding the window always lands on the same passages.
+ * There is one position, not one per delivery time: every in-order time shows
+ * the same passage that day. Kept out of Settings on purpose — Settings is held
+ * in React state on two screens, and a stale copy written back would undo a
+ * tick made elsewhere.
  */
 
 const CURSOR_KEY = 'guidance.cursor.v1';
+const DONE_KEY = 'guidance.done.v1';
 
 /** The first guidance ayah — where a reading that has never run begins. */
 export const CURSOR_START = 1;
@@ -39,7 +36,7 @@ export function advance(start: number, count: number, total: number): number {
 }
 
 export async function loadCursor(): Promise<number> {
-  const raw = await AsyncStorage.getItem(CURSOR_KEY);
+  const raw = await store.getItem(CURSOR_KEY);
   if (raw === null) return CURSOR_START;
   try {
     return normalizeCursor(JSON.parse(raw));
@@ -49,10 +46,64 @@ export async function loadCursor(): Promise<number> {
 }
 
 export async function saveCursor(position: number): Promise<void> {
-  await AsyncStorage.setItem(CURSOR_KEY, JSON.stringify(normalizeCursor(position)));
+  await store.setItem(CURSOR_KEY, JSON.stringify(normalizeCursor(position)));
 }
 
-/** Start the pass through the set over from the first ayah. */
+/** Start the pass through the set over: every tick cleared, cursor on the first ayah. */
 export async function resetCursor(): Promise<void> {
+  await store.removeItem(DONE_KEY);
   await saveCursor(CURSOR_START);
+}
+
+// ---------------------------------------------------------------------------
+// Practised ayahs
+// ---------------------------------------------------------------------------
+
+export async function loadDone(): Promise<Set<number>> {
+  const raw = await store.getItem(DONE_KEY);
+  if (!raw) return new Set();
+  try {
+    const list = JSON.parse(raw) as unknown;
+    return new Set(
+      (Array.isArray(list) ? list : []).filter(
+        (n): n is number => Number.isInteger(n) && n >= 1 && n <= TOTAL_GUIDANCE,
+      ),
+    );
+  } catch {
+    return new Set();
+  }
+}
+
+async function saveDone(done: Set<number>): Promise<void> {
+  await store.setItem(DONE_KEY, JSON.stringify([...done].sort((a, b) => a - b)));
+}
+
+/**
+ * The first unticked ordinal at or after `from`, wrapping round to the start.
+ * With everything ticked there is nothing to move to, so `from` stands.
+ */
+export function nextUnticked(done: Set<number>, from: number): number {
+  for (let i = 0; i < TOTAL_GUIDANCE; i++) {
+    const ordinal = advance(from, i, TOTAL_GUIDANCE);
+    if (!done.has(ordinal)) return ordinal;
+  }
+  return from;
+}
+
+/**
+ * Tick or untick an ayah. Ticking the one under the cursor carries the cursor
+ * forward to the next unticked ayah; unticking never moves it back — the
+ * reading goes forward, an earlier ayah can be reopened without rewinding.
+ */
+export async function toggleDone(ordinal: number): Promise<{ done: Set<number>; cursor: number }> {
+  const done = await loadDone();
+  if (done.has(ordinal)) done.delete(ordinal);
+  else done.add(ordinal);
+  await saveDone(done);
+  let cursor = await loadCursor();
+  if (done.has(cursor)) {
+    cursor = nextUnticked(done, cursor);
+    await saveCursor(cursor);
+  }
+  return { done, cursor };
 }

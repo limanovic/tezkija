@@ -1,5 +1,5 @@
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AyahBlock } from '@/components/ayah-block';
@@ -13,9 +13,11 @@ import {
   getTranslationsByIds,
 } from '@/lib/db';
 import { useT } from '@/lib/i18n';
+import { rebuildSchedule } from '@/lib/notifications';
 import { formatReference, parsePassageKey, resolvePassage } from '@/lib/passage';
 import { Settings, loadSettings } from '@/lib/settings';
 import { Theme, useTheme } from '@/lib/theme';
+import { loadDone, toggleDone } from '@/lib/wird';
 
 type LoadedPassage = {
   rows: GuidanceRow[];
@@ -34,6 +36,20 @@ export default function ReaderScreen() {
   const { key: rawKey } = useLocalSearchParams<{ key: string }>();
   const [passage, setPassage] = useState<LoadedPassage | null>(null);
   const [error, setError] = useState(false);
+  const [done, setDone] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    loadDone().then(setDone).catch(() => {});
+  }, []);
+
+  // Ticking may move the cursor; pending in-order reminders hold the old ayah.
+  const onToggleDone = useCallback((ordinal: number) => {
+    (async () => {
+      const result = await toggleDone(ordinal);
+      setDone(result.done);
+      await rebuildSchedule(await loadSettings());
+    })().catch(() => {});
+  }, []);
 
   const key = useMemo(() => (rawKey ? parsePassageKey(rawKey) : null), [rawKey]);
 
@@ -88,6 +104,8 @@ export default function ReaderScreen() {
               settings={settings}
               translations={translations}
               languages={languages}
+              done={done.has(row.ordinal)}
+              onToggleDone={() => onToggleDone(row.ordinal)}
             />
           );
         })}

@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Linking, Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import Constants from 'expo-constants';
@@ -21,6 +21,7 @@ import {
   notificationLanguages,
   saveSettings,
 } from '@/lib/settings';
+import { isSupabaseConfigured, useSession } from '@/lib/supabase';
 import { setThemePreference, useTheme } from '@/lib/theme';
 import { makeListStyles } from '@/lib/ui-styles';
 
@@ -51,6 +52,7 @@ export default function SettingsScreen() {
   const styles = useMemo(() => makeListStyles(theme), [theme]);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [languages, setLanguages] = useState<LanguageRow[]>([]);
+  const session = useSession();
 
   useEffect(() => {
     loadSettings().then(setSettings);
@@ -120,6 +122,27 @@ export default function SettingsScreen() {
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Stack.Screen options={{ title: t('settings') }} />
 
+      {isSupabaseConfigured() && (
+        <>
+          <Text style={styles.sectionTitle}>{t('account')}</Text>
+          <View style={styles.card}>
+            <Pressable
+              style={styles.row}
+              accessibilityRole="button"
+              onPress={() => router.push('/account')}
+            >
+              <View>
+                <Text style={styles.rowLabel}>{session?.user.email ?? t('signIn')}</Text>
+                {!session && <Text style={styles.rowSub}>{t('accountHint')}</Text>}
+              </View>
+              <Text style={styles.chevron} accessibilityElementsHidden importantForAccessibility="no">
+                ›
+              </Text>
+            </Pressable>
+          </View>
+        </>
+      )}
+
       <Text style={styles.sectionTitle}>{t('appearance')}</Text>
       <View style={styles.card}>
         <View style={styles.segmented}>
@@ -165,6 +188,15 @@ export default function SettingsScreen() {
               apply({ ...settings, translations: toggled(settings.translations, code, value) }),
           ),
         )}
+        {/* Latin under the Arabic headwords in the lessons; the ayahs never carry it. */}
+        <View style={styles.row}>
+          <Text style={styles.rowLabel}>{t('translitToggle')}</Text>
+          <Switch
+            value={settings.showTranslit}
+            trackColor={{ true: theme.accent }}
+            onValueChange={(value) => persist({ ...settings, showTranslit: value })}
+          />
+        </View>
       </View>
 
       <Text style={styles.sectionTitle}>{t('notifLangTitle')}</Text>

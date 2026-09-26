@@ -1,19 +1,9 @@
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Tabs, router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Linking,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleProp,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Linking, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
+import { StepButton } from '@/components/step-button';
+import { TimePicker, TimePickerEvent } from '@/components/time-picker';
 import { loadBookmarks, loadLastPosition } from '@/lib/bookmarks';
 import { TOTAL_GUIDANCE, getGuidanceByOrdinalRange, getSurahs } from '@/lib/db';
 import { useT } from '@/lib/i18n';
@@ -41,7 +31,8 @@ import {
   loadSettings,
   saveSettings,
 } from '@/lib/settings';
-import { CURSOR_START, loadCursor, resetCursor } from '@/lib/wird';
+import { CURSOR_START, loadCursor, loadDone, resetCursor } from '@/lib/wird';
+import { useSyncVersion } from '@/lib/sync';
 import { useTheme } from '@/lib/theme';
 import { makeListStyles } from '@/lib/ui-styles';
 
@@ -65,57 +56,9 @@ async function labelFor(ordinal: number, fallback: string): Promise<string> {
   return row && name ? `${name} ${row.surah}:${row.ayah}` : fallback;
 }
 
-/**
- * Stepper button that keeps firing while held — reaching 10 from 1 is
- * otherwise nine separate taps.
- */
-function StepButton({
-  label,
-  glyph,
-  disabled,
-  style,
-  textStyle,
-  onStep,
-}: {
-  label: string;
-  glyph: string;
-  disabled: boolean;
-  style: StyleProp<ViewStyle>;
-  textStyle: StyleProp<TextStyle>;
-  onStep: () => void;
-}) {
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-  // The interval must call the *current* onStep: the one captured when the
-  // hold began still sees the old count and would re-apply the same value.
-  const step = useRef(onStep);
-  step.current = onStep;
-  const stop = useCallback(() => {
-    if (timer.current) clearInterval(timer.current);
-    timer.current = null;
-  }, []);
-  useEffect(() => stop, [stop]);
-
-  return (
-    <Pressable
-      style={style}
-      disabled={disabled}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      accessibilityState={{ disabled }}
-      onPress={onStep}
-      onLongPress={() => {
-        stop();
-        timer.current = setInterval(() => step.current(), 120);
-      }}
-      onPressOut={stop}
-    >
-      <Text style={textStyle}>{glyph}</Text>
-    </Pressable>
-  );
-}
-
 export default function GuidanceHomeScreen() {
   const theme = useTheme();
+  const syncVersion = useSyncVersion();
   const t = useT();
   const styles = useMemo(() => makeListStyles(theme), [theme]);
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -128,6 +71,7 @@ export default function GuidanceHomeScreen() {
   const [bookmarkCount, setBookmarkCount] = useState(0);
   // Where the shared in-order progression stands, and its human reference.
   const [cursor, setCursor] = useState<number>(CURSOR_START);
+  const [doneCount, setDoneCount] = useState(0);
   const [nextUpLabel, setNextUpLabel] = useState<string | null>(null);
   // Exact-alarm state: true everywhere except Android 12+ without the grant.
   const [exactAlarms, setExactAlarms] = useState(true);
@@ -158,15 +102,17 @@ export default function GuidanceHomeScreen() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
-        const [loaded, lastOrdinal, bookmarks, wird] = await Promise.all([
+        const [loaded, lastOrdinal, bookmarks, wird, done] = await Promise.all([
           loadSettings(),
           loadLastPosition(),
           loadBookmarks(),
           loadCursor(),
+          loadDone(),
         ]);
         setSettings(loaded);
         setBookmarkCount(bookmarks.length);
         setCursor(wird);
+        setDoneCount(done.size);
         // Covers coming back from the system toggle if the broadcast is missed.
         if (Platform.OS === 'android') setExactAlarms(canScheduleExactAlarms());
         if (!lastOrdinal) {
@@ -178,14 +124,23 @@ export default function GuidanceHomeScreen() {
           label: await labelFor(lastOrdinal, t('ayahN', { n: lastOrdinal })),
         });
       })().catch(() => {});
+      // syncVersion: an account sync that pulled new state re-runs this.
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [syncVersion]),
   );
 
-  // The cursor moves when a reminder fires, which the scheduler notices on its
-  // next run — not on any user action this screen can see.
+  // Ticking an ayah in the Reader moves the cursor and rebuilds the window;
+  // pick the new position up from that rebuild.
   useEffect(
-    () => onLedgerChange(() => { loadCursor().then(setCursor).catch(() => {}); }),
+    () =>
+      onLedgerChange(() => {
+        Promise.all([loadCursor(), loadDone()])
+          .then(([c, d]) => {
+            setCursor(c);
+            setDoneCount(d.size);
+          })
+          .catch(() => {});
+      }),
     [],
   );
 
@@ -246,7 +201,7 @@ export default function GuidanceHomeScreen() {
   }, [settings]);
 
   const onTimePicked = useCallback(
-    async (event: DateTimePickerEvent, date?: Date) => {
+    async (event: TimePickerEvent, date?: Date) => {
       const mode = picker;
       setPicker(null);
       if (event.type !== 'set' || !date || !settings) return;
@@ -317,11 +272,12 @@ export default function GuidanceHomeScreen() {
     return new Date(2000, 0, 1, hh, mm);
   };
 
-  /** Begin the pass through the set again; pending reminders hold stale positions. */
+  /** Begin the pass through the set again: ticks cleared, pending reminders rebuilt. */
   const startOver = () => {
     (async () => {
       await resetCursor();
       setCursor(await loadCursor());
+      setDoneCount(0);
       await rebuildSchedule(await loadSettings());
     })().catch(() => {});
   };
@@ -368,13 +324,7 @@ export default function GuidanceHomeScreen() {
           <Text style={styles.addText}>+ {t('addTime')}</Text>
         </Pressable>
         {picker === 'add' && (
-          <DateTimePicker
-            value={pickerValue(null)}
-            mode="time"
-            is24Hour
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={onTimePicked}
-          />
+          <TimePicker value={pickerValue(null)} onChange={onTimePicked} />
         )}
       </View>
 
@@ -388,6 +338,12 @@ export default function GuidanceHomeScreen() {
             <View style={styles.row}>
               <Text style={styles.rowLabel}>{t('nextUp')}</Text>
               <Text style={styles.rowValue}>{nextUpLabel ?? '…'}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>{t('practised')}</Text>
+              <Text style={styles.rowValue}>
+                {t('practisedCount', { n: doneCount, total: TOTAL_GUIDANCE })}
+              </Text>
             </View>
             <Pressable style={styles.row} accessibilityRole="button" onPress={startOver}>
               <Text style={styles.linkText}>{t('startOver')}</Text>
@@ -528,13 +484,7 @@ export default function GuidanceHomeScreen() {
                   </View>
                 </Pressable>
                 {picker === 'edit' && (
-                  <DateTimePicker
-                    value={pickerValue(edited.time)}
-                    mode="time"
-                    is24Hour
-                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                    onChange={onTimePicked}
-                  />
+                  <TimePicker value={pickerValue(edited.time)} onChange={onTimePicked} />
                 )}
                 <View style={styles.row}>
                   <Text style={styles.rowLabel}>{t('amount')}</Text>

@@ -1,6 +1,5 @@
-import { Asset } from 'expo-asset';
-import { Directory, File, Paths } from 'expo-file-system';
-import * as SQLite from 'expo-sqlite';
+import { openDatabase } from './db-open';
+import { Db } from './db-types';
 
 /** One row of the `ayah` table. Global `id` runs 1..6236 across the whole Qur'an. */
 export type AyahRow = {
@@ -52,48 +51,62 @@ export type GuidanceSurah = SurahRow & { count: number; firstOrdinal: number };
 /** Size of the guidance set. scripts/build-db.py asserts the table matches. */
 export const TOTAL_GUIDANCE = 340;
 
-// Bump the name whenever the bundled database changes shape — the copy runs
-// once per install, so existing installs only pick up a new file under a new
-// name. Older copies are deleted below.
-const DB_NAME = 'tezkija.v1.db';
-const OLD_DB_NAMES: string[] = [];
+/*
+ * Arapski — vocabulary tables built by scripts/build-vocab.py from the Quranic
+ * Arabic Corpus morphology. `lemma` holds the 1,000 most frequent lemmas,
+ * `lesson` the 111 lessons in the order they are taught, `lesson_item` what
+ * each lesson contains (a lemma, or hand-written glue text), `lemma_example`
+ * two ayahs per lemma with the token to highlight.
+ */
+
+export type LemmaRow = {
+  id: number;
+  arabic: string;
+  translit: string;
+  root: string | null;
+  pos: string;
+  freq: number;
+  rank: number;
+  gloss_en: string;
+  gloss_bs: string;
+};
 
 /**
- * expo-sqlite cannot open a database straight from the asset bundle, so on
- * first launch we copy the bundled quran.db into the app's document
- * directory under SQLite/ (where openDatabaseAsync looks for it). The copy
- * runs at most once per install: if the file already exists we skip it.
- * The database is treated as read-only — we never write to it.
+ * Phases: 0 glue (prefixes/suffixes), 1 particles, 2–3 words in frequency
+ * order, 4 grammar. Grammar lessons carry markdown in body_* and no items.
  */
-async function copyDatabaseIfNeeded(): Promise<void> {
-  const sqliteDir = new Directory(Paths.document, 'SQLite');
-  if (!sqliteDir.exists) {
-    sqliteDir.create({ intermediates: true });
-  }
-  for (const oldName of OLD_DB_NAMES) {
-    const oldFile = new File(sqliteDir, oldName);
-    if (oldFile.exists) oldFile.delete();
-  }
-  const dbFile = new File(sqliteDir, DB_NAME);
-  if (dbFile.exists) return;
+export type LessonRow = {
+  id: number;
+  ordinal: number;
+  phase: number;
+  title_bs: string;
+  title_en: string;
+  body_bs: string | null;
+  body_en: string | null;
+};
 
-  const asset = Asset.fromModule(require('../../assets/quran.db'));
-  await asset.downloadAsync(); // resolves the asset to a local file:// URI
-  if (!asset.localUri) {
-    throw new Error('Could not resolve bundled quran.db asset');
-  }
-  new File(asset.localUri).copy(dbFile);
-}
+/** One card of a lesson: a lemma, or (phase 0) hand-written glue text. */
+export type LessonItem = {
+  ordinal: number;
+  lemma: LemmaRow | null;
+  arabic: string | null;
+  gloss_bs: string | null;
+  gloss_en: string | null;
+  note_bs: string | null;
+  note_en: string | null;
+};
 
-let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
+/** An example ayah for a lemma. `word_index` is 1-based into `arabic.split(' ')`. */
+export type LemmaExampleRow = AyahRow & { lemma_id: number; word_index: number };
 
-/** Open (and on first call, copy) the bundled database. Safe to call repeatedly. */
-export function getDb(): Promise<SQLite.SQLiteDatabase> {
+export type VocabMeta = { total_tokens: number; lemma_count: number; max_rank: number };
+
+let dbPromise: Promise<Db> | null = null;
+
+/** Open the bundled database (platform-specific, see db-open). Safe to call repeatedly. */
+export function getDb(): Promise<Db> {
   if (!dbPromise) {
-    dbPromise = (async () => {
-      await copyDatabaseIfNeeded();
-      return SQLite.openDatabaseAsync(DB_NAME);
-    })();
+    dbPromise = openDatabase();
     // Reset on failure so a transient error doesn't poison every later call.
     dbPromise.catch(() => {
       dbPromise = null;
@@ -199,4 +212,143 @@ export async function getGuidanceSurahs(): Promise<GuidanceSurah[]> {
      FROM guidance g JOIN ayah a ON a.id = g.ayah_id JOIN surah s ON s.number = a.surah
      GROUP BY s.number ORDER BY s.number`,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Arapski
+// ---------------------------------------------------------------------------
+
+let lessonsPromise: Promise<LessonRow[]> | null = null;
+
+/** Every lesson in teaching order, cached after the first query. */
+export function getLessons(): Promise<LessonRow[]> {
+  if (!lessonsPromise) {
+    lessonsPromise = (async () => {
+      const db = await getDb();
+      return db.getAllAsync<LessonRow>('SELECT * FROM lesson ORDER BY ordinal');
+    })();
+    lessonsPromise.catch(() => {
+      lessonsPromise = null;
+    });
+  }
+  return lessonsPromise;
+}
+
+export async function getLesson(id: number): Promise<LessonRow | null> {
+  const lessons = await getLessons();
+  return lessons.find((l) => l.id === id) ?? null;
+}
+
+/** The lesson's cards in order, with the lemma joined in where there is one. */
+export async function getLessonItems(lessonId: number): Promise<LessonItem[]> {
+  const db = await getDb();
+  type Row = {
+    ordinal: number;
+    lemma_id: number | null;
+    arabic: string | null;
+    gloss_bs: string | null;
+    gloss_en: string | null;
+    note_bs: string | null;
+    note_en: string | null;
+    l_arabic: string | null;
+    l_translit: string | null;
+    l_root: string | null;
+    l_pos: string | null;
+    l_freq: number | null;
+    l_rank: number | null;
+    l_gloss_en: string | null;
+    l_gloss_bs: string | null;
+  };
+  const rows = await db.getAllAsync<Row>(
+    `SELECT i.ordinal, i.lemma_id, i.arabic, i.gloss_bs, i.gloss_en, i.note_bs, i.note_en,
+            l.arabic AS l_arabic, l.translit AS l_translit, l.root AS l_root, l.pos AS l_pos,
+            l.freq AS l_freq, l.rank AS l_rank, l.gloss_en AS l_gloss_en, l.gloss_bs AS l_gloss_bs
+     FROM lesson_item i LEFT JOIN lemma l ON l.id = i.lemma_id
+     WHERE i.lesson_id = ? ORDER BY i.ordinal`,
+    [lessonId],
+  );
+  return rows.map((r) => ({
+    ordinal: r.ordinal,
+    lemma:
+      r.lemma_id !== null
+        ? {
+            id: r.lemma_id,
+            arabic: r.l_arabic ?? '',
+            translit: r.l_translit ?? '',
+            root: r.l_root,
+            pos: r.l_pos ?? '',
+            freq: r.l_freq ?? 0,
+            rank: r.l_rank ?? 0,
+            gloss_en: r.l_gloss_en ?? '',
+            gloss_bs: r.l_gloss_bs ?? '',
+          }
+        : null,
+    arabic: r.arabic,
+    gloss_bs: r.gloss_bs,
+    gloss_en: r.gloss_en,
+    note_bs: r.note_bs,
+    note_en: r.note_en,
+  }));
+}
+
+/** Lemmas by id, returned in the order asked for. */
+export async function getLemmasByIds(ids: number[]): Promise<LemmaRow[]> {
+  if (ids.length === 0) return [];
+  const db = await getDb();
+  const marks = ids.map(() => '?').join(', ');
+  const rows = await db.getAllAsync<LemmaRow>(`SELECT * FROM lemma WHERE id IN (${marks})`, ids);
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return ids.map((id) => byId.get(id)).filter((r): r is LemmaRow => r !== undefined);
+}
+
+/** All lemmas, rank order — 1,000 small rows, fine to hold at once. */
+export async function getAllLemmas(): Promise<LemmaRow[]> {
+  const db = await getDb();
+  return db.getAllAsync<LemmaRow>('SELECT * FROM lemma ORDER BY rank');
+}
+
+/** Example ayahs for a set of lemmas, keyed by lemma id, shortest first. */
+export async function getExamplesForLemmas(ids: number[]): Promise<Map<number, LemmaExampleRow[]>> {
+  const map = new Map<number, LemmaExampleRow[]>();
+  if (ids.length === 0) return map;
+  const db = await getDb();
+  const marks = ids.map(() => '?').join(', ');
+  const rows = await db.getAllAsync<LemmaExampleRow>(
+    `SELECT a.*, e.lemma_id, e.word_index
+     FROM lemma_example e JOIN ayah a ON a.id = e.ayah_id
+     WHERE e.lemma_id IN (${marks}) ORDER BY e.lemma_id, LENGTH(a.arabic)`,
+    ids,
+  );
+  for (const row of rows) {
+    const list = map.get(row.lemma_id) ?? [];
+    list.push(row);
+    map.set(row.lemma_id, list);
+  }
+  return map;
+}
+
+let vocabMetaPromise: Promise<VocabMeta> | null = null;
+
+export function getVocabMeta(): Promise<VocabMeta> {
+  if (!vocabMetaPromise) {
+    vocabMetaPromise = (async () => {
+      const db = await getDb();
+      const row = await db.getFirstAsync<VocabMeta>('SELECT * FROM vocab_meta');
+      if (!row) throw new Error('vocab_meta is empty');
+      return row;
+    })();
+    vocabMetaPromise.catch(() => {
+      vocabMetaPromise = null;
+    });
+  }
+  return vocabMetaPromise;
+}
+
+/** How many word cards each lesson has, keyed by lesson id — one query, not one per lesson. */
+export async function getLessonWordCounts(): Promise<Map<number, number>> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<{ lesson_id: number; n: number }>(
+    'SELECT lesson_id, COUNT(*) AS n FROM lesson_item WHERE lemma_id IS NOT NULL GROUP BY lesson_id',
+  );
+  return new Map(rows.map((r) => [r.lesson_id, r.n]));
 }

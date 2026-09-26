@@ -2,12 +2,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as IntentLauncher from 'expo-intent-launcher';
 import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
-import { GuidanceRow, TOTAL_GUIDANCE, getTranslationsByIds } from './db';
-import { applyUiLanguage, t } from './i18n';
+import {
+  GuidanceRow,
+  LemmaRow,
+  LessonItem,
+  LessonRow,
+  getExamplesForLemmas,
+  getAllLemmas,
+  getLemmasByIds,
+  getLessonItems,
+  getLessons,
+  getTranslationsByIds,
+} from './db';
+import { applyUiLanguage, currentUiLanguage, t } from './i18n';
 import { displayArabic } from './mushaf';
-import { PassageKey, buildPassage, buildPassageAt, formatReference } from './passage';
-import { Delivery, Settings, notificationLanguages } from './settings';
-import { advance, loadCursor, saveCursor } from './wird';
+import { LedgerEntry, LedgerKind, NotificationPayload, TapListener } from './notification-types';
+import { buildPassage, buildPassageAt, formatReference } from './passage';
+import { ArabicDelivery, Delivery, Settings, notificationLanguages } from './settings';
+import { Progress, boxOf, dueLemmaIds, isKnown, loadLessonCursor, loadProgress } from './vocab';
+import { loadCursor } from './wird';
 
 /*
  * Scheduling model — rolling window with pre-committed random picks.
@@ -31,15 +44,7 @@ import { advance, loadCursor, saveCursor } from './wird';
  * fills in the tail.
  */
 
-export type LedgerEntry = {
-  notificationId: string;
-  dateISO: string; // 'YYYY-MM-DD' local calendar day
-  time: string; // 'HH:mm'
-  passageKey: PassageKey;
-  // Where the shared cursor lands once this occurrence has fired. Set only for
-  // passages taken in order — a random pick must never move the cursor.
-  nextCursor?: number;
-};
+export type { LedgerEntry, LedgerKind, NotificationPayload } from './notification-types';
 
 const LEDGER_KEY = 'ledger.v1';
 const EXACT_PROMPT_KEY = 'exactAlarmPrompt.dismissed.v1';
@@ -60,6 +65,34 @@ export function configureNotificationHandling(): void {
       shouldSetBadge: false,
     }),
   });
+}
+
+/**
+ * Notification taps, the cold-start one included. The OS replays the launch
+ * response to the listener as well, so a tap can be reported twice — the id
+ * lets the caller take it once.
+ */
+export function subscribeToTaps(listener: TapListener): () => void {
+  const record = (response: Notifications.NotificationResponse) =>
+    listener(
+      response.notification.request.identifier,
+      response.notification.request.content.data as NotificationPayload | undefined,
+    );
+  Notifications.getLastNotificationResponseAsync()
+    .then((response) => {
+      if (response) record(response);
+    })
+    .catch(() => {});
+  const sub = Notifications.addNotificationResponseReceivedListener(record);
+  return () => sub.remove();
+}
+
+/**
+ * The OS module remembers the last response until it is cleared, so without
+ * this every later cold start would reopen the Reader on a stale passage.
+ */
+export function clearLastTap(): void {
+  Notifications.clearLastNotificationResponseAsync?.().catch(() => {});
 }
 
 export async function ensureAndroidChannel(): Promise<void> {
@@ -170,30 +203,24 @@ function occurrenceDate(dateISO: string, time: string): Date {
   return new Date(y, m - 1, d, hh, mm, 0, 0);
 }
 
-function occurrenceKey(e: { dateISO: string; time: string }): string {
-  return `${e.dateISO} ${e.time}`;
+/**
+ * The two delivery lists may share a wall-clock time — an ayah and a lesson
+ * both at 09:00 — so an occurrence is keyed by list as well as by time.
+ */
+function occurrenceKey(e: { dateISO: string; time: string; kind?: LedgerKind }): string {
+  const list = e.kind === undefined || e.kind === 'guidance' ? 'g' : 'a';
+  return `${e.dateISO} ${e.time} ${list}`;
 }
 
 function byOccurrence(a: LedgerEntry, b: LedgerEntry): number {
   return occurrenceDate(a.dateISO, a.time).getTime() - occurrenceDate(b.dateISO, b.time).getTime();
 }
 
-/**
- * Move the shared wird cursor past the occurrences that have already fired, and
- * drop those entries from the ledger. This is the only place the cursor
- * advances: a wird moves on because its portion was delivered, not merely
- * because a notification was queued. Entries are applied in chronological
- * order, so the last in-order one to fire is where the wird now stands.
- */
+/** Drop ledger entries whose occurrence has already fired. */
 async function settleElapsed(now: Date): Promise<LedgerEntry[]> {
   const stored = await loadLedger();
   const pending = stored.filter((e) => occurrenceDate(e.dateISO, e.time) > now);
-  if (pending.length === stored.length) return pending;
-
-  const elapsed = stored.filter((e) => occurrenceDate(e.dateISO, e.time) <= now).sort(byOccurrence);
-  const settled = elapsed.filter((e) => e.nextCursor !== undefined).pop();
-  if (settled?.nextCursor !== undefined) await saveCursor(settled.nextCursor);
-  await saveLedger(pending);
+  if (pending.length !== stored.length) await saveLedger(pending);
   return pending;
 }
 
@@ -222,30 +249,26 @@ async function buildBody(rows: GuidanceRow[], settings: Settings): Promise<strin
 }
 
 /**
- * `cursor` present means this delivery is in order and resumes from that
- * ordinal; absent, the passage is a random pick that leaves the cursor alone.
+ * `cursor` present means this delivery is in order and shows the passage at
+ * that ordinal — the same one every time until the ayah is ticked; absent, the
+ * passage is a random pick.
  */
-async function scheduleOccurrence(
+async function scheduleGuidanceOccurrence(
   dateISO: string,
   delivery: Delivery,
   settings: Settings,
   cursor?: number,
 ): Promise<LedgerEntry> {
-  let passage: Awaited<ReturnType<typeof buildPassage>>;
-  let nextCursor: number | undefined;
-  if (cursor === undefined) {
-    passage = await buildPassage(delivery.count);
-  } else {
-    passage = await buildPassageAt(delivery.count, cursor);
-    nextCursor = advance(cursor, passage.passageKey.count, TOTAL_GUIDANCE);
-  }
-  const { rows, passageKey } = passage;
+  const { rows, passageKey } =
+    cursor === undefined
+      ? await buildPassage(delivery.count)
+      : await buildPassageAt(delivery.count, cursor);
   const title = await formatReference(rows);
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title,
       body: await buildBody(rows, settings),
-      data: { passageKey },
+      data: { passageKey } satisfies NotificationPayload,
       sound: false,
     },
     trigger: {
@@ -258,9 +281,157 @@ async function scheduleOccurrence(
     notificationId,
     dateISO,
     time: delivery.time,
+    kind: 'guidance',
     passageKey,
-    ...(nextCursor !== undefined && { nextCursor }),
   };
+}
+
+/*
+ * Arapski deliveries. Like passages, their content is picked and baked in at
+ * scheduling time: the lesson notification carries the lesson the cursor
+ * stands on now, a review the words due by that occurrence, a word delivery
+ * a few frequent words not yet known. Finishing a lesson or a quiz rebuilds
+ * the window so the pending picks catch up.
+ */
+
+type ArabicContext = {
+  lessons: LessonRow[];
+  cursor: number;
+  progress: Progress;
+  lemmas: LemmaRow[]; // rank order
+};
+
+async function loadArabicContext(): Promise<ArabicContext> {
+  const [lessons, cursor, progress, lemmas] = await Promise.all([
+    getLessons(),
+    loadLessonCursor(),
+    loadProgress(),
+    getAllLemmas(),
+  ]);
+  return { lessons, cursor, progress, lemmas };
+}
+
+function gloss(l: LemmaRow): string {
+  return currentUiLanguage() === 'en' ? l.gloss_en : l.gloss_bs;
+}
+
+function lessonTitle(lesson: LessonRow): string {
+  const title = currentUiLanguage() === 'en' ? lesson.title_en : lesson.title_bs;
+  return `${t('lessonN', { n: lesson.ordinal })} · ${title}`;
+}
+
+/** Cards of a lesson as one line each; grammar lessons summarise their text. */
+function lessonBody(lesson: LessonRow, items: LessonItem[]): string {
+  const en = currentUiLanguage() === 'en';
+  const lines = items.map((i) => {
+    if (i.lemma) return `${displayArabic(i.lemma.arabic)} — ${gloss(i.lemma)}`;
+    const g = (en ? i.gloss_en : i.gloss_bs) ?? '';
+    return `${displayArabic(i.arabic ?? '')} — ${g}`;
+  });
+  if (lines.length > 0) return lines.join('\n');
+  const body = (en ? lesson.body_en : lesson.body_bs) ?? '';
+  const text = body
+    .split('\n')
+    .map((l) => l.replace(/^#+\s*/, '').replace(/\*/g, '').trim())
+    .filter((l) => l.length > 0)
+    .slice(0, 4)
+    .join(' ');
+  return text || t('open');
+}
+
+/** Shuffle in place (Fisher–Yates) and return the array. */
+function shuffle<T>(list: T[]): T[] {
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}
+
+/**
+ * Words for a 'word' delivery: `count` picked at random from the most
+ * frequent 5×count lemmas not yet known, so the notification stays useful
+ * but not the same every day.
+ */
+function pickUnknownWords(ctx: ArabicContext, count: number): LemmaRow[] {
+  const pool = ctx.lemmas.filter((l) => !isKnown(ctx.progress, l.id)).slice(0, count * 5);
+  return shuffle(pool).slice(0, count).sort((a, b) => a.rank - b.rank);
+}
+
+/**
+ * Words for a 'review' delivery: up to `count` due by the occurrence, soonest
+ * first. With nothing due, the box-0 words of the cursor lesson stand in, then
+ * frequent unknown words — a review slot is never empty.
+ */
+async function pickReviewWords(ctx: ArabicContext, count: number, at: Date): Promise<LemmaRow[]> {
+  const known = new Set(ctx.lemmas.map((l) => l.id));
+  const due = dueLemmaIds(ctx.progress, at.getTime()).filter((id) => known.has(id));
+  if (due.length > 0) return getLemmasByIds(due.slice(0, count));
+  const items = await getLessonItems(ctx.cursor);
+  const fresh = items
+    .map((i) => i.lemma)
+    .filter((l): l is LemmaRow => l !== null && boxOf(ctx.progress, l.id) === 0)
+    .slice(0, count);
+  if (fresh.length > 0) return fresh;
+  return pickUnknownWords(ctx, count);
+}
+
+async function wordBody(words: LemmaRow[], settings: Settings): Promise<string> {
+  const examples = await getExamplesForLemmas(words.map((w) => w.id));
+  const lang = notificationLanguages(settings).find((c) => c !== 'ar');
+  const ayahIds = words.map((w) => examples.get(w.id)?.[0]?.id).filter((id): id is number => id !== undefined);
+  const translations = lang ? await getTranslationsByIds([lang], ayahIds) : {};
+  return words
+    .map((w) => {
+      const head = `${displayArabic(w.arabic)} (${w.translit}) — ${gloss(w)}`;
+      const ex = examples.get(w.id)?.[0];
+      if (!ex) return head;
+      const lines = [head, `${displayArabic(ex.arabic)} (${ex.surah}:${ex.ayah})`];
+      const tr = lang ? translations[lang]?.[ex.id] : undefined;
+      if (tr) lines.push(tr);
+      return lines.join('\n');
+    })
+    .join('\n\n');
+}
+
+async function scheduleArabicOccurrence(
+  dateISO: string,
+  delivery: ArabicDelivery,
+  settings: Settings,
+  ctx: ArabicContext,
+): Promise<LedgerEntry> {
+  const at = occurrenceDate(dateISO, delivery.time);
+  let title: string;
+  let body: string;
+  const payload: NotificationPayload = { kind: delivery.kind };
+  if (delivery.kind === 'lesson') {
+    const lesson = ctx.lessons.find((l) => l.id === ctx.cursor) ?? ctx.lessons[0];
+    const items = await getLessonItems(lesson.id);
+    title = lessonTitle(lesson);
+    body = lessonBody(lesson, items);
+    payload.lessonId = lesson.id;
+  } else if (delivery.kind === 'review') {
+    const words = await pickReviewWords(ctx, delivery.count, at);
+    title = `${t('notifReview')} · ${t('wordsCount', { n: words.length })}`;
+    // Arabic only: the point is to recall the meaning before opening.
+    body = words.map((w) => `${displayArabic(w.arabic)} · ${w.translit}`).join('\n');
+    payload.lemmaIds = words.map((w) => w.id);
+  } else {
+    const words = pickUnknownWords(ctx, delivery.count);
+    title = words.length > 1 ? `${t('notifWord')} · ${t('wordsCount', { n: words.length })}` : t('notifWord');
+    body = await wordBody(words, settings);
+    payload.lemmaIds = words.map((w) => w.id);
+  }
+  if (body.length > 2000) body = `${body.slice(0, 2000)}…`;
+  const notificationId = await Notifications.scheduleNotificationAsync({
+    content: { title, body, data: payload, sound: false },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: at,
+      channelId: ANDROID_CHANNEL_ID,
+    },
+  });
+  return { notificationId, dateISO, time: delivery.time, ...payload };
 }
 
 // Scheduling operations mutate the ledger and the OS notification queue, so
@@ -292,13 +463,23 @@ export function topUpSchedule(settings: Settings): Promise<LedgerEntry[]> {
   return enqueue(() => topUpScheduleInner(settings));
 }
 
+/** Both lists merged into one clock-ordered day plan. */
+type Slot = { time: string; guidance?: Delivery; arabic?: ArabicDelivery };
+
+function daySlots(settings: Settings): Slot[] {
+  const slots: Slot[] = [
+    ...settings.deliveries.map((d) => ({ time: d.time, guidance: d })),
+    ...settings.arabicDeliveries.map((d) => ({ time: d.time, arabic: d })),
+  ];
+  return slots.sort((a, b) => a.time.localeCompare(b.time));
+}
+
 async function topUpScheduleInner(settings: Settings): Promise<LedgerEntry[]> {
+  const slots = daySlots(settings);
   // No times set: the user has turned notifications off from inside the app.
   // Clear anything still pending — and note the horizon maths below would
   // divide by zero and loop forever on an empty list.
-  if (settings.deliveries.length === 0) {
-    // Settle before discarding: portions already delivered still count, so a
-    // wird resumed later picks up where it stopped rather than repeating.
+  if (slots.length === 0) {
     await settleElapsed(new Date());
     await Notifications.cancelAllScheduledNotificationsAsync();
     await saveLedger([]);
@@ -314,35 +495,39 @@ async function topUpScheduleInner(settings: Settings): Promise<LedgerEntry[]> {
   const ledger = await settleElapsed(now);
   const scheduled = new Set(ledger.map(occurrenceKey));
 
-  // Where the in-order progression stands, then where the still-pending
-  // notifications have already carried it. The walk is in memory only — none of
-  // it is committed until those occurrences elapse, so cancelling the window and
-  // rebuilding it lands on the same passages.
+  // Every in-order occurrence in the window shows the passage under the
+  // cursor. Ticking the ayah moves the cursor and rebuilds the window.
   const cursor = await loadCursor();
-  const claimed = [...ledger]
-    .sort(byOccurrence)
-    .filter((e) => e.nextCursor !== undefined)
-    .pop();
-  let walk = claimed?.nextCursor ?? cursor;
+  // Lesson cursor and Leitner state are read once per top-up; every Arapski
+  // occurrence in this run is picked against the same snapshot.
+  const arabicCtx = settings.arabicDeliveries.length > 0 ? await loadArabicContext() : null;
 
-  // Fill the window: N days × deliveries/day, never exceeding MAX_PENDING total.
-  const horizonDays = Math.max(1, Math.floor(MAX_PENDING / settings.deliveries.length));
+  // Fill the window: N days × deliveries/day (both lists), never exceeding
+  // MAX_PENDING total.
+  const horizonDays = Math.max(1, Math.floor(MAX_PENDING / slots.length));
   outer: for (let offset = 0; offset < horizonDays; offset++) {
     const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
     const dateISO = toDateISO(day);
-    for (const delivery of settings.deliveries) {
+    for (const slot of slots) {
       if (ledger.length >= MAX_PENDING) break outer;
-      if (occurrenceDate(dateISO, delivery.time) <= now) continue; // today's already-past times
-      if (scheduled.has(occurrenceKey({ dateISO, time: delivery.time }))) continue;
-      // Deliveries are visited in clock order within each day, so several
-      // in-order times split one continuous reading across the day.
-      const entry = await scheduleOccurrence(
-        dateISO,
-        delivery,
-        settings,
-        delivery.mode === 'sequential' ? walk : undefined,
-      );
-      if (entry.nextCursor !== undefined) walk = entry.nextCursor;
+      if (occurrenceDate(dateISO, slot.time) <= now) continue; // today's already-past times
+      let entry: LedgerEntry;
+      if (slot.guidance) {
+        const delivery = slot.guidance;
+        if (scheduled.has(occurrenceKey({ dateISO, time: delivery.time, kind: 'guidance' }))) continue;
+        entry = await scheduleGuidanceOccurrence(
+          dateISO,
+          delivery,
+          settings,
+          delivery.mode === 'sequential' ? cursor : undefined,
+        );
+      } else if (slot.arabic && arabicCtx) {
+        const delivery = slot.arabic;
+        if (scheduled.has(occurrenceKey({ dateISO, time: delivery.time, kind: delivery.kind }))) continue;
+        entry = await scheduleArabicOccurrence(dateISO, delivery, settings, arabicCtx);
+      } else {
+        continue;
+      }
       ledger.push(entry);
       scheduled.add(occurrenceKey(entry));
     }
@@ -359,8 +544,6 @@ async function topUpScheduleInner(settings: Settings): Promise<LedgerEntry[]> {
  */
 export function rebuildSchedule(settings: Settings): Promise<LedgerEntry[]> {
   return enqueue(async () => {
-    // The ledger is about to go, and with it the record of which portions have
-    // already been delivered — bank that into the cursors before it does.
     await settleElapsed(new Date());
     await Notifications.cancelAllScheduledNotificationsAsync();
     await AsyncStorage.removeItem(LEDGER_KEY);

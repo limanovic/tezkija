@@ -19,6 +19,16 @@ type Props = {
   bookmarked?: boolean;
   /** When provided, a bookmark toggle appears next to the reference chip. */
   onToggleBookmark?: (ayahId: number) => void;
+  /** Ticked as practised — the in-order reading moves past it. */
+  done?: boolean;
+  /** When provided, a practised toggle appears next to the reference chip. */
+  onToggleDone?: (ayahId: number) => void;
+  /**
+   * 1-based index of the token to draw in the accent colour — the word a
+   * vocabulary example is about. Indexes `row.arabic.split(' ')`, so pause
+   * marks count as tokens too (the build script never points at one).
+   */
+  highlightWord?: number;
 };
 
 function AyahBlockInner({
@@ -30,6 +40,9 @@ function AyahBlockInner({
   languages,
   bookmarked,
   onToggleBookmark,
+  done,
+  onToggleDone,
+  highlightWord,
 }: Props) {
   const theme = useTheme();
   const t = useT();
@@ -66,17 +79,41 @@ function AyahBlockInner({
               </View>
             )}
           </View>
-          {onToggleBookmark && (
-            <Pressable hitSlop={10} onPress={() => onToggleBookmark(row.id)}>
-              <Text style={[styles.bookmarkText, bookmarked && styles.bookmarkTextActive]}>
-                {bookmarked ? `★ ${t('bookmarked')}` : `☆ ${t('bookmark')}`}
-              </Text>
-            </Pressable>
-          )}
+          <View style={styles.chips}>
+            {onToggleDone && (
+              <Pressable
+                hitSlop={10}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: !!done }}
+                onPress={() => onToggleDone(row.id)}
+              >
+                <Text style={[styles.bookmarkText, done && styles.doneTextActive]}>
+                  {done ? `☑ ${t('practised')}` : `☐ ${t('practised')}`}
+                </Text>
+              </Pressable>
+            )}
+            {onToggleBookmark && (
+              <Pressable hitSlop={10} onPress={() => onToggleBookmark(row.id)}>
+                <Text style={[styles.bookmarkText, bookmarked && styles.bookmarkTextActive]}>
+                  {bookmarked ? `★ ${t('bookmarked')}` : `☆ ${t('bookmark')}`}
+                </Text>
+              </Pressable>
+            )}
+          </View>
         </View>
         {settings.showArabic && (
           <Text style={styles.arabic}>
-            {displayArabic(row.arabic)} {ayahMark(row.ayah)}
+            {highlightWord === undefined
+              ? displayArabic(row.arabic)
+              : displayArabic(row.arabic)
+                  .split(' ')
+                  .map((token, i) => (
+                    <Text key={i} style={i + 1 === highlightWord ? styles.highlight : undefined}>
+                      {i > 0 ? ' ' : ''}
+                      {token}
+                    </Text>
+                  ))}{' '}
+            {ayahMark(row.ayah)}
           </Text>
         )}
         {settings.translations.map((code) => {
@@ -145,7 +182,7 @@ function makeStyles(theme: Theme, scale: number) {
       justifyContent: 'space-between',
       marginBottom: 10,
     },
-    chips: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    chips: { flexDirection: 'row', alignItems: 'center', gap: 10 },
     badge: {
       borderRadius: 6,
       paddingHorizontal: 8,
@@ -165,6 +202,7 @@ function makeStyles(theme: Theme, scale: number) {
     refChipTextBookmarked: { color: theme.onAccent },
     bookmarkText: { color: theme.textMuted, fontSize: 13, fontWeight: '500' },
     bookmarkTextActive: { color: theme.gold },
+    doneTextActive: { color: theme.accent },
     arabic: {
       fontFamily: 'UthmanicHafs',
       fontSize: size(28),
@@ -173,6 +211,7 @@ function makeStyles(theme: Theme, scale: number) {
       textAlign: 'right',
       writingDirection: 'rtl',
     },
+    highlight: { color: theme.accent },
     translation: { marginTop: 12 },
     translationLabel: {
       fontSize: 11,

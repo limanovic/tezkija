@@ -30,7 +30,8 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# local env files — .env holds the Supabase project of this build, .env.example is the template
+.env
 .env*.local
 
 # typescript
@@ -49,3 +50,11 @@ modules/*/ios/build/
 # upload keystore + its passwords — back these up outside the repo, losing
 # them means the Play upload key has to be reset before you can ship again
 /credentials/
+
+# Quranic Arabic Corpus download cache; the reviewed glosses stay tracked
+scripts/data/*
+!scripts/data/glosses.csv
+
+# copied into the web export by scripts/prepare-web.js
+public/quran.db
+public/sql-wasm-browser.wasm

@@ -1,0 +1,1001 @@
+lemma_id,key,arabic,translit,root,pos,freq,gloss_en,gloss_bs,reviewed
+1,min,مِن,min,,P,3226,"from, of","od, iz",0
+2,{ll~ah,ٱللَّه,Allah,اله,PN,2699,"God, Allah",Allah,0
+3,maA,مَا,mā,,REL,2565,what; not,što; ne (prošlost),0
+4,laA,لَا,lā,,NEG,1738,"no, not","ne, nema",0
+5,fiY,فِى,fī,,P,1701,in,u,0
+6,<in~,إِنّ,inn,,ACC,1682,"indeed, verily","zaista, doista",0
+7,qaAla,قَالَ,kāla,قول,V,1618,to say,reći,0
+8,{l~a*iY,ٱلَّذِى,allazī,,REL,1464,"who, which (rel.)","koji, onaj koji",0
+9,EalaY`,عَلَىٰ,'alā,,P,1445,"on, upon, over","na, nad",0
+10,kaAna,كَانَ,kāna,كون,V,1358,to be,biti,0
+11,rab~,رَبّ,rabb,ربب,N,975,Lord,Gospodar,0
+12,man,مَن,man,,REL,871,"who, whoever","ko, ko god",0
+13,<ilaY`,إِلَىٰ,ilā,,P,742,"to, towards","ka, prema, do",0
+14,<in,إِن,in,,COND,697,if,ako,0
+15,<il~aA,إِلَّا,illā,,RES,663,"except, but","osim, nego",0
+16,>an,أَن,an,,SUB,625,"that, to (+verb)",da (+glagol),0
+17,'aAmana,ءَامَنَ,āmana,امن,V,537,to believe,vjerovati,0
+18,*a`lik,ذَٰلِك,zālik,,DEM,520,that (dem.),"to, ono",0
+19,PRON:3MS,هُوَ,huva,,PRON,481,he,on,0
+20,Ean,عَن,'an,,P,465,"from, about","od, o",0
+21,>aroD,أَرْض,ard,ارض,N,461,"earth, land",zemlja,0
+22,PRON:3MP,هُمْ,hum,,PRON,442,they,oni,0
+23,<i*aA,إِذَا,izā,,T,409,"when, if","kada, ako",0
+24,qad,قَد,kad,,CERT,406,already; indeed,već; doista,0
+25,yawom,يَوْم,javm,يوم,N,405,day,dan,0
+26,qawom,قَوْم,kavm,قوم,N,383,"people, nation",narod,0
+27,Ealima,عَلِمَ,'alima,علم,V,382,to know,znati,0
+28,'aAyap,ءَايَة,āja,ايي,N,382,"sign, verse","znak, ajet",0
+29,>an~,أَنّ,ann,,ACC,362,that (conj.),da (veznik),0
+30,kul~,كُلّ,kull,كلل,N,359,"all, every","svi, svaki",0
+31,lam,لَم,lam,,NEG,353,did not,nije (+ sad. vr.),0
+32,jaEala,جَعَلَ,dža'ala,جعل,V,340,"to make, put","učiniti, staviti",0
+33,vum~,ثُمّ,summ,,CONJ,338,"then, afterwards","zatim, potom",0
+34,rasuwl,رَسُول,rasūl,رسل,N,332,messenger,poslanik,0
+35,Ea*aAb,عَذَاب,'azāb,عذب,N,322,punishment,kazna,0
+36,ha`*aA,هَٰذَا,hāzā,,DEM,318,this,"ovo, ovaj",0
+37,samaA^',سَمَآء,samā',سمو,N,310,"sky, heaven",nebo,0
+38,nafos,نَفْس,nafs,نفس,N,295,"soul, self","duša, osoba",0
+39,kafara,كَفَرَ,kafara,كفر,V,289,to disbelieve,"ne vjerovati, poricati",0
+40,$aYo',شَىْء,šaj',شيا,N,283,thing,stvar,0
+41,>aw,أَو,av,,CONJ,280,or,ili,0
+42,jaA^'a,جَآءَ,džā'a,جيا,V,278,to come,doći,0
+43,Eamila,عَمِلَ,'amila,عمل,V,276,"to do, work","raditi, činiti",0
+44,A^taY,آتَى,ātā,اتي,V,271,to give,dati,0
+45,ra'aA,رَءَا,ra'ā,راي,V,271,to see,vidjeti,0
+46,bayon,بَيْن,bajn,بين,LOC,266,between,između,0
+47,>ataY,أَتَى,atā,اتي,V,264,"to come, bring","doći, donijeti",0
+48,kita`b,كِتَٰب,kitāb,كتب,N,260,book,knjiga,0
+49,Haq~,حَقّ,hakk,حقق,N,247,"truth, right","istina, pravo",0
+50,qabol,قَبْل,kabl,قبل,N,242,before,prije,0
+51,n~aAs,نَاس,nās,نوس,N,241,"people, mankind",ljudi,0
+52,<i*,إِذ,iz,,T,239,when (past),kada (u prošlosti),0
+53,$aA^'a,شَآءَ,šā'a,شيا,V,236,"to will, wish","htjeti, željeti",0
+54,>uwla`^}ik,أُولَٰٓئِك,ūlā'ik,,DEM,204,those,"oni, ti (pokazna)",0
+55,mu&omin,مُؤْمِن,mu'min,امن,N,202,believer,vjernik,0
+56,law,لَو,lav,,COND,201,if (hypothetical),"kad bi, da",0
+57,baEod,بَعْد,ba'd,بعد,N,199,after,"poslije, nakon",0
+58,Eind,عِند,'ind,عند,LOC,197,"with, at","kod, pri",0
+59,xalaqa,خَلَقَ,halaka,خلق,V,184,to create,stvoriti,0
+60,>anzala,أَنزَلَ,anzala,نزل,V,183,to send down,"spustiti, objaviti",0
+61,xayor,خَيْر,hajr,خير,N,178,"good, better","dobro, bolje",0
+62,ka*~aba,كَذَّبَ,kazzaba,كذب,V,176,"to deny, call a lie","poricati, utjerivati u laž",0
+63,sabiyl,سَبِيل,sabīl,سبل,N,176,"way, path",put,0
+64,daEaA,دَعَا,da'ā,دعو,V,170,"to call, pray","zvati, moliti",0
+65,{t~aqaY`,ٱتَّقَىٰ,ittakā,وقي,V,166,"to fear God, be mindful","bojati se, čuvati se (Allaha)",0
+66,>amor,أَمْر,amr,امر,N,166,"command, matter","naredba, stvar",0
+67,Ealiym,عَلِيم,'alīm,علم,ADJ,163,all-knowing,sveznajući,0
+68,maE,مَع,ma',,LOC,159,with,"sa, zajedno",0
+69,baEoD,بَعْض,ba'd,بعض,N,157,"some, part","neki, dio",0
+70,lam~aA,لَمَّا,lammā,,T,156,when (past),"kada, pošto",0
+71,A^xir,آخِر,āhir,اخر,N,155,last; the Hereafter,posljednji; ahiret,0
+72,>ay~uhaA,أَيُّهَا,ajjuhā,,N,153,O you (vocative),o (dozivanje),0
+73,gayor,غَيْر,gajr,غير,N,147,"other than, not","drugi, osim, ne-",0
+74,jan~ap,جَنَّة,džanna,جنن,N,147,"garden, paradise","vrt, džennet",0
+75,<ila`h,إِلَٰه,ilāh,اله,N,147,"god, deity","bog, božanstvo",0
+76,naAr,نَار,nār,نور,N,145,fire,vatra,0
+77,hadaY,هَدَى,hadā,هدي,V,144,to guide,uputiti,0
+78,duwn,دُون,dūn,دون,N,144,"besides, other than","osim, mimo",0
+79,Hat~aY`,حَتَّىٰ,hattā,,P,142,until,"dok, sve do",0
+80,>araAda,أَرَادَ,arāda,رود,V,139,"to want, intend","htjeti, namjeravati",0
+81,>am,أَم,am,,CONJ,137,or (in questions),ili (u pitanju),0
+82,muwsaY`,مُوسَىٰ,Mūsā,,PN,136,Moses,Musa,0
+83,{t~abaEa,ٱتَّبَعَ,ittaba'a,تبع,V,136,to follow,slijediti,0
+84,PRON:2MP,أَنتُمْ,antum,,PRON,135,you (pl.),vi,0
+85,qalob,قَلْب,kalb,قلب,N,132,heart,srce,0
+86,Eabod,عَبْد,'abd,عبد,N,131,"servant, slave","rob, sluga",0
+87,>arosala,أَرْسَلَ,arsala,رسل,V,130,to send,poslati,0
+88,ka`firuwn,كَٰفِرُون,kāfirūn,كفر,N,129,disbelievers,nevjernici,0
+89,ZaAlim,ظَالِم,zālim,ظلم,N,129,wrongdoer,"nasilnik, nepravedni",0
+90,>axa*a,أَخَذَ,ahaza,اخذ,V,127,to take,uzeti,0
+91,bal,بَل,bal,,RET,127,"rather, nay","naprotiv, štaviše",0
+92,>ahol,أَهْل,ahl,اهل,N,127,"people, family","porodica, stanovnici",0
+93,{t~axa*a,ٱتَّخَذَ,ittahaza,اخذ,V,124,"to take, adopt",uzeti (sebi),0
+94,laEal~,لَعَلّ,la'all,,ACC,123,"perhaps, so that","možda, da bi",0
+95,Eabada,عَبَدَ,'abada,عبد,V,122,to worship,"obožavati, robovati",0
+96,EaZiym,عَظِيم,'azīm,عظم,ADJ,120,"great, mighty","veliki, veličanstven",0
+97,yad,يَد,jad,يدي,N,120,hand,ruka,0
+98,m~ubiyn,مُبِين,mubīn,بين,N,119,"clear, evident","jasan, očit",0
+99,r~aHiym,رَحِيم,rahīm,رحم,ADJ,116,merciful,milostiv,0
+100,d~unoyaA,دُنْيَا,dunjā,دنو,ADJ,115,this world,"ovaj svijet, dunjaluk",0
+101,raHomap,رَحْمَة,rahma,رحم,N,114,mercy,milost,0
+102,Zalama,ظَلَمَ,zalama,ظلم,V,110,"to wrong, oppress","nasilje činiti, oštetiti",0
+103,lan,لَن,lan,,NEG,106,will never,neće nikada,0
+104,sa>ala,سَأَلَ,sa'ala,سال,V,106,to ask,"pitati, tražiti",0
+105,wajada,وَجَدَ,vadžada,وجد,V,106,to find,naći,0
+106,Eilom,عِلْم,'ilm,علم,N,105,knowledge,znanje,0
+107,>ajor,أَجْر,adžr,اجر,N,105,"reward, wage","nagrada, plaća",0
+108,Eaziyz,عَزِيز,'azīz,عزز,N,101,"mighty, dear","silan, moćan",0
+109,>axoraja,أَخْرَجَ,ahradža,خرج,V,99,to bring out,"izvesti, izbaciti",0
+110,Hakiym,حَكِيم,hakīm,حكم,ADJ,97,wise,mudar,0
+111,>akala,أَكَلَ,akala,اكل,V,93,to eat,jesti,0
+112,*uw,ذُو,zū,,N,93,"owner of, having","vlasnik, onaj koji ima",0
+113,hal,هَل,hal,,INTG,93,is? (question),"da li, zar",0
+114,diyn,دِين,dīn,دين,N,92,religion; judgement,vjera; sud,0
+115,qawol,قَوْل,kavl,قول,N,92,"saying, word","riječ, govor",0
+116,gafuwr,غَفُور,gafūr,غفر,N,91,forgiving,onaj koji prašta,0
+117,l~ayosa,لَيْسَ,lajsa,ليس,V,89,is not,nije,0
+118,$ayoTa`n,شَيْطَٰن,Šajtān,شطن,PN,88,Satan,šejtan,0
+119,maval,مَثَل,masal,مثل,N,88,"example, parable","primjer, prispodoba",0
+120,faEala,فَعَلَ,fa'ala,فعل,V,88,to do,"činiti, raditi",0
+121,malak,مَلَك,malak,ملك,N,88,angel,melek,0
+122,n~aZara,نَظَرَ,nazara,نظر,V,87,to look,"gledati, pogledati",0
+123,PRON:1P,نَحْنُ,nahnu,,PRON,86,we,mi,0
+124,waliY~,وَلِىّ,valijj,ولي,N,86,"protector, ally","zaštitnik, prijatelj",0
+125,maAl,مَال,māl,مول,N,86,"wealth, property",imetak,0
+126,hudFY,هُدًى,hudan,هدي,N,85,guidance,uputa,0
+127,*akara,ذَكَرَ,zakara,ذكر,V,84,"to remember, mention","sjećati se, spomenuti",0
+128,faDol,فَضْل,fadl,فضل,N,84,"grace, bounty","dobrota, blagodat",0
+129,layol,لَيْل,lajl,ليل,N,84,night,noć,0
+130,Salaw`p,صَلَوٰة,salā,صلو,N,83,prayer,"namaz, molitva",0
+131,kayof,كَيْف,kajf,كيف,INTG,83,how,kako,0
+132,qatala,قَتَلَ,katala,قتل,V,83,to kill,ubiti,0
+133,xaAfa,خَافَ,hāfa,خوف,V,83,to fear,bojati se,0
+134,>aw~al,أَوَّل,avval,اول,N,82,first,prvi,0
+135,PRON:2MS,أَنتَ,anta,,PRON,81,you (m. sg.),ti,0
+136,bunaY~,بُنَىّ,bunajj,بني,N,80,my son,sinko,0
+137,>akovar,أَكْثَر,aksar,كثر,N,80,"most, more","više, većina",0
+138,rajaEa,رَجَعَ,radža'a,رجع,V,79,to return,vratiti se,0
+139,>aSoHa`b,أَصْحَٰب,ashāb,صحب,N,78,"companions, people of","drugovi, stanovnici",0
+140,tawal~aY`,تَوَلَّىٰ,tavallā,ولي,V,78,to turn away,"okrenuti se, odvratiti se",0
+141,samiEa,سَمِعَ,sami'a,سمع,V,78,to hear,čuti,0
+142,>amara,أَمَرَ,amara,امر,V,77,to command,narediti,0
+143,jahan~am,جَهَنَّم,Džahannam,,PN,77,Hell,Džehennem,0
+144,zawoj,زَوْج,zavdž,زوج,N,76,"spouse, pair","supružnik, par",0
+145,daxala,دَخَلَ,dahala,دخل,V,76,to enter,ući,0
+146,Hayaw`p,حَيَوٰة,hajā,حيي,N,76,life,život,0
+147,*ikor,ذِكْر,zikr,ذكر,N,76,"remembrance, reminder","sjećanje, opomena",0
+148,mivol,مِثْل,misl,مثل,N,75,"like, similar","poput, sličan",0
+149,n~abiY~,نَبِىّ,nabijj,نبا,N,75,prophet,vjerovjesnik,0
+150,lawolaA^,لَوْلَآ,lavlā,,EXH,75,"if not, why not",da nije; zašto ne,0
+151,>ax,أَخ,ah,اخو,N,75,brother,brat,0
+152,xa`lid,خَٰلِد,hālid,خلد,N,74,abiding forever,vječni (stanovnik),0
+153,firoEawon,فِرْعَوْن,Fir'avn,,PN,74,Pharaoh,faraon,0
+154,>aHad,أَحَد,ahad,احد,N,74,"one, anyone","jedan, iko",0
+155,Ea`lamiyn,عَٰلَمِين,'ālamīn,علم,N,73,the worlds,svjetovi,0
+156,la`kin,لَٰكِن,lākin,,AMD,73,but,"ali, nego",0
+157,jazaY`,جَزَىٰ,džazā,جزي,V,73,"to reward, repay","nagraditi, uzvratiti",0
+158,>aliym,أَلِيم,alīm,الم,ADJ,72,painful,bolan,0
+159,wajoh,وَجْه,vadžh,وجه,N,72,face,lice,0
+160,>aTaAEa,أَطَاعَ,atā'a,طوع,V,72,to obey,"pokoriti se, slušati",0
+161,>awoHaY`^,أَوْحَىٰٓ,avhā,وحي,V,72,"to reveal, inspire","objaviti, nadahnuti",0
+162,<insa`n,إِنسَٰن,insān,انس,N,71,human being,čovjek,0
+163,bay~inap,بَيِّنَة,bajjina,بين,N,71,clear proof,jasan dokaz,0
+164,>a$oraka,أَشْرَكَ,ašraka,شرك,V,71,to associate (partners),pripisivati druga (širk),0
+165,Eamal,عَمَل,'amal,عمل,N,71,"deed, work","djelo, rad",0
+166,>aloqaY`^,أَلْقَىٰٓ,alkā,لقي,V,71,"to throw, cast",baciti,0
+167,qaliyl,قَلِيل,kalīl,قلل,N,70,"little, few",malo,0
+168,qiya`map,قِيَٰمَة,kijāma,قوم,N,70,resurrection,"kijamet, proživljenje",0
+169,A^xar,آخَر,āhar,اخر,N,70,"other, another",drugi,0
+170,quro'aAn,قُرْءَان,Kur'ān,قرا,PN,70,Qur'an,Kur'an,0
+171,waEada,وَعَدَ,va'ada,وعد,V,70,to promise,obećati,0
+172,yawoma}i*,يَوْمَئِذ,javma'iz,,T,70,that day,toga dana,0
+173,<iboraAhiym,إِبْرَاهِيم,Ibrāhīm,,PN,69,Abraham,Ibrahim,0
+174,>anfaqa,أَنفَقَ,anfaka,نفق,V,68,to spend,"trošiti, udjeljivati",0
+175,PRON:1S,أَنَا,anā,,PRON,68,I,ja,0
+176,gafara,غَفَرَ,gafara,غفر,V,65,to forgive,oprostiti,0
+177,Sa`liH,صَٰلِح,sālih,صلح,N,65,"righteous, good","dobar, čestit",0
+178,bayot,بَيْت,bajt,بيت,N,65,house,kuća,0
+179,yamiyn,يَمِين,jamīn,يمن,N,65,right hand; oath,desnica; zakletva,0
+180,>aDal~a,أَضَلَّ,adalla,ضلل,V,64,to lead astray,"zavesti, odvesti u zabludu",0
+181,PRON:3FS,هِىَ,hija,,PRON,64,she,ona,0
+182,>um~ap,أُمَّة,umma,امم,N,64,"community, nation","zajednica, narod",0
+183,A^baA',آبَاء,ābā',ابو,N,64,"fathers, forefathers","očevi, preci",0
+184,>aSaAba,أَصَابَ,asāba,صوب,V,64,"to befall, strike","pogoditi, zadesiti",0
+185,>aHobabo,أَحْبَبْ,ahbab,حبب,V,64,to love,voljeti,0
+186,maA^',مَآء,mā',موه,N,63,water,voda,0
+187,kaviyr,كَثِير,kasīr,كثر,N,63,"many, much",mnogo,0
+188,taAba,تَابَ,tāba,توب,V,63,to repent,pokajati se,0
+189,{bon,ٱبْن,ibn,بني,N,63,son,sin,0
+190,naz~ala,نَزَّلَ,nazzala,نزل,V,62,to send down,"spuštati, objavljivati",0
+191,S~a`liHa`t,صَٰلِحَٰت,sālihāt,صلح,N,62,good deeds,dobra djela,0
+192,kasaba,كَسَبَ,kasaba,كسب,V,62,to earn,"steći, zaraditi",0
+193,razaqa,رَزَقَ,razaka,رزق,V,61,to provide,opskrbiti,0
+194,talaY`,تَلَىٰ,talā,تلو,V,61,to recite,"učiti, kazivati",0
+195,>aY~,أَىّ,ajj,,INTG,60,"which, any",koji,0
+196,SaAdiq,صَادِق,sādik,صدق,N,59,truthful,"iskren, istinit",0
+197,naSara,نَصَرَ,nasara,نصر,V,59,to help,pomoći,0
+198,nisaA^',نِسَآء,nisā',نسو,N,59,women,žene,0
+199,qaDaY`^,قَضَىٰٓ,kadā,قضي,V,59,"to decree, decide","odrediti, presuditi",0
+200,Sabara,صَبَرَ,sabara,صبر,V,58,to be patient,strpjeti se,0
+201,na*iyr,نَذِير,nazīr,نذر,N,58,warner,opominjatelj,0
+202,r~aHoma`n,رَحْمَٰن,rahmān,رحم,N,57,Most Gracious,Milostivi,0
+203,jarayo,جَرَيْ,džaraj,جري,V,57,to flow,teći,0
+204,qaroyap,قَرْيَة,karja,قري,N,57,"town, village","naselje, grad",0
+205,Eayon,عَيْن,'ajn,عين,N,57,eye; spring,oko; izvor,0
+206,la`kin~,لَٰكِنّ,lākinn,,ACC,57,but,ali,0
+207,nahaAr,نَهَار,nahār,نهر,N,57,daytime,dan (obdanica),0
+208,$ahiyd,شَهِيد,šahīd,شهد,N,56,witness,svjedok,0
+209,mas~a,مَسَّ,massa,مسس,V,56,to touch,dotaknuti,0
+210,walad,وَلَد,valad,ولد,N,56,"child, son","dijete, sin",0
+211,$adiyd,شَدِيد,šadīd,شدد,ADJ,56,"severe, strong","žestok, jak",0
+212,rizoq,رِزْق,rizk,رزق,N,55,provision,opskrba,0
+213,Daraba,ضَرَبَ,daraba,ضرب,V,55,to strike; set forth,udariti; navesti,0
+214,>am~aA,أَمَّا,ammā,,EXL,55,as for,što se tiče,0
+215,>aqaAma,أَقَامَ,akāma,قوم,V,54,"to establish, set up","uspostaviti, obavljati",0
+216,nahar,نَهَر,nahar,نهر,N,54,river,rijeka,0
+217,qa`tala,قَٰتَلَ,kātala,قتل,V,54,to fight,boriti se,0
+218,jamiyE,جَمِيع,džamī',جمع,N,53,"all, together","svi, zajedno",0
+219,xaraja,خَرَجَ,haradža,خرج,V,53,to go out,izaći,0
+220,Dal~a,ضَلَّ,dalla,ضلل,V,53,to go astray,zalutati,0
+221,baEava,بَعَثَ,ba'asa,بعث,V,52,"to send, raise up","poslati, proživjeti",0
+222,xaloq,خَلْق,halk,خلق,N,52,creation,"stvaranje, stvorenja",0
+223,>ajal,أَجَل,adžal,اجل,N,52,"term, appointed time",rok,0
+224,mujorim,مُجْرِم,mudžrim,جرم,N,52,"criminal, sinner","zločinac, griješnik",0
+225,taHot,تَحْت,taht,تحت,N,51,"under, beneath",ispod,0
+226,>aHoyaA,أَحْيَا,ahjā,حيي,V,51,to give life,oživjeti,0
+227,baSiyr,بَصِير,basīr,بصر,N,51,all-seeing,onaj koji sve vidi,0
+228,>aholaka,أَهْلَكَ,ahlaka,هلك,V,51,to destroy,uništiti,0
+229,ta*ak~ara,تَذَكَّرَ,tazakkara,ذكر,V,51,"to remember, take heed","sjetiti se, pouku uzeti",0
+230,mawot,مَوْت,mavt,موت,N,50,death,smrt,0
+231,Eaduw~,عَدُوّ,'aduvv,عدو,N,50,enemy,neprijatelj,0
+232,niEomap,نِعْمَة,ni'ma,نعم,N,50,"favour, blessing",blagodat,0
+233,suw^',سُوٓء,sū',سوا,N,50,evil,zlo,0
+234,{fotaraY`,ٱفْتَرَىٰ,iftarā,فري,V,50,to invent (a lie),izmisliti (laž),0
+235,mut~aqiyn,مُتَّقِين,muttakīn,وقي,N,49,the God-fearing,bogobojazni,0
+236,gayob,غَيْب,gajb,غيب,N,49,the unseen,"nevidljivo, gajb",0
+237,zaAda,زَادَ,zāda,زيد,V,49,to increase,povećati,0
+238,Eaqalu,عَقَلُ,'akalu,عقل,V,49,"to understand, reason","razumjeti, shvatiti",0
+239,kataba,كَتَبَ,kataba,كتب,V,49,"to write, prescribe","pisati, propisati",0
+240,>aEolam,أَعْلَم,a'lam,علم,N,49,knows best,najbolje zna,0
+241,waEod,وَعْد,va'd,وعد,N,49,promise,obećanje,0
+242,baSar,بَصَر,basar,بصر,N,48,sight,vid,0
+243,daAr,دَار,dār,دور,N,48,"home, abode","kuća, boravište",0
+244,mulok,مُلْك,mulk,ملك,N,48,"kingdom, dominion","vlast, kraljevstvo",0
+245,saAEap,سَاعَة,sā'a,سوع,N,48,the Hour,Čas (Sudnji),0
+246,Zan~a,ظَنَّ,zanna,ظنن,V,47,"to think, suppose","misliti, pretpostaviti",0
+247,samiyE,سَمِيع,samī',سمع,N,47,all-hearing,onaj koji sve čuje,0
+248,$akara,شَكَرَ,šakara,شكر,V,46,to thank,zahvaljivati,0
+249,nab~a>a,نَبَّأَ,nabba'a,نبا,V,46,to inform,obavijestiti,0
+250,>abN,أَبٌ,abun,ابو,N,46,father,otac,0
+251,Sira`T,صِرَٰط,sirāt,صرط,N,45,"path, way","put, staza",0
+252,qadiyr,قَدِير,kadīr,قدر,N,45,"able, powerful","moćan, svemoćan",0
+253,<iyma`n,إِيمَٰن,īmān,امن,N,45,faith,"vjerovanje, iman",0
+254,Hakama,حَكَمَ,hakama,حكم,V,45,to judge,suditi,0
+255,>uwliY,أُولِى,ūlī,اول,N,45,"possessors of, those with","oni koji imaju, posjednici",0
+256,ya*ara,يَذَرَ,jazara,وذر,V,45,"to leave, let","ostaviti, pustiti",0
+257,xabiyr,خَبِير,habīr,خبر,ADJ,45,all-aware,"onaj koji sve zna, obaviješteni",0
+258,>an*ara,أَنذَرَ,anzara,نذر,V,44,to warn,opomenuti,0
+259,$ahida,شَهِدَ,šahida,شهد,V,44,"to witness, testify",svjedočiti,0
+260,mu$orik,مُشْرِك,mušrik,شرك,N,44,polytheist,mnogobožac,0
+261,Hasiba,حَسِبَ,hasiba,حسب,V,44,"to think, reckon","misliti, računati",0
+262,Sador,صَدْر,sadr,صدر,N,44,"chest, breast","prsa, grudi",0
+263,naAdaY`,نَادَىٰ,nādā,ندو,V,44,to call out,"dozvati, zovnuti",0
+264,malakato,مَلَكَتْ,malakat,ملك,V,44,"to possess, own",posjedovati,0
+265,Hamod,حَمْد,hamd,حمد,N,43,praise,hvala,0
+266,nuwr,نُور,nūr,نور,N,43,light,svjetlost,0
+267,<isoraA}iyl,إِسْرَائِيل,Isrā'īl,,PN,43,Israel,Israil,0
+268,nuwH,نُوح,Nūh,,PN,43,Noah,Nuh,0
+269,sab~aHa,سَبَّحَ,sabbaha,سبح,V,42,to glorify,"slaviti, veličati",0
+270,jazaA^',جَزَآء,džazā',جزي,N,42,"recompense, reward","nagrada, plaća",0
+271,{sotaTaAEa,ٱسْتَطَاعَ,istatā'a,طوع,V,42,to be able,moći,0
+272,>udoxila,أُدْخِلَ,udhila,دخل,V,42,"to be admitted, brought in",biti uveden,0
+273,sawof,سَوْف,savf,,FUT,42,will (future),će (budućnost),0
+274,sala`m,سَلَٰم,salām,سلم,N,42,peace,"mir, spas",0
+275,fawoq,فَوْق,favk,فوق,N,41,"above, over",iznad,0
+276,Eal~ama,عَلَّمَ,'allama,علم,V,41,to teach,poučiti,0
+277,suboHa`n,سُبْحَٰن,subhān,سبح,N,41,glory be to,slavljen neka je,0
+278,baHor,بَحْر,bahr,بحر,N,41,sea,more,0
+279,Hamala,حَمَلَ,hamala,حمل,V,41,to carry,nositi,0
+280,Ea*~aba,عَذَّبَ,'azzaba,عذب,V,41,to punish,kazniti,0
+281,taraka,تَرَكَ,taraka,ترك,V,40,to leave,"ostaviti, napustiti",0
+282,{sotakobara,ٱسْتَكْبَرَ,istakbara,كبر,V,40,to be arrogant,oholiti se,0
+283,{hotadaY`,ٱهْتَدَىٰ,ihtadā,هدي,V,40,to be guided,"uputiti se, naći pravi put",0
+284,>arayo,أَرَيْ,araj,راي,V,40,to show,pokazati,0
+285,wayol,وَيْل,vajl,,N,40,woe,"teško, jao",0
+286,bi}osa,بِئْسَ,bi'sa,باس,V,40,"how bad, evil is",kako je loše,0
+287,xa$iYa,خَشِىَ,hašija,خشي,V,40,to fear,strahovati,0
+288,balaga,بَلَغَ,balaga,بلغ,V,40,to reach,"stići, doseći",0
+289,{sotagofara,ٱسْتَغْفَرَ,istagfara,غفر,V,40,to seek forgiveness,tražiti oprost,0
+290,kabiyr,كَبِير,kabīr,كبر,ADJ,40,"big, great",velik,0
+291,tawak~alo,تَوَكَّلْ,tavakkal,وكل,V,40,"to rely, trust",osloniti se,0
+292,$ariyk,شَرِيك,šarīk,شرك,N,40,partner,"drug, sudionik",0
+293,{som,ٱسْم,ism,سمو,N,39,name,ime,0
+294,>alaA^,أَلَآ,alā,,INC,39,"behold, indeed","pazi, doista",0
+295,<i*on,إِذْن,izn,اذن,N,39,permission,dozvola,0
+296,musolim,مُسْلِم,muslim,سلم,N,39,Muslim,musliman,0
+297,m~aAta,مَاتَ,māta,موت,V,39,to die,umrijeti,0
+298,Har~ama,حَرَّمَ,harrama,حرم,V,39,"to forbid, make sacred","zabraniti, učiniti svetim",0
+299,HisaAb,حِسَاب,hisāb,حسب,N,39,"reckoning, account","obračun, račun",0
+300,jabal,جَبَل,džabal,جبل,N,39,mountain,"brdo, planina",0
+301,bu$~ira,بُشِّرَ,buššira,بشر,V,38,to be given good news,biti obradovan,0
+302,m~ay~it,مَيِّت,majjit,موت,N,38,dead,mrtav,0
+303,muHosin,مُحْسِن,muhsin,حسن,N,38,doer of good,dobročinitelj,0
+304,r~aDiYa,رَضِىَ,radija,رضو,V,38,to be pleased,biti zadovoljan,0
+305,m~aEoruwf,مَعْرُوف,ma'rūf,عرف,N,38,"right, kindness","dobro, lijepo",0
+306,Dala`l,ضَلَٰل,dalāl,ضلل,N,38,"error, going astray",zabluda,0
+307,m~usotaqiym,مُسْتَقِيم,mustakīm,قوم,N,37,straight,"pravi, ispravan",0
+308,faAsiq,فَاسِق,fāsik,فسق,N,37,"rebel, sinner","griješnik, buntovnik",0
+309,yaHozun,يَحْزُن,jahzun,حزن,V,37,to grieve,"žalostiti, tugovati",0
+310,naj~aY`,نَجَّىٰ,nadždžā,نجو,V,37,"to save, rescue",spasiti,0
+311,kufor,كُفْر,kufr,كفر,N,37,disbelief,nevjerovanje,0
+312,Ha$ara,حَشَرَ,hašara,حشر,V,37,to gather,"sakupiti, okupiti",0
+313,*anb,ذَنب,zanb,ذنب,N,37,sin,grijeh,0
+314,ba$ar,بَشَر,bašar,بشر,N,37,"human, mankind","čovjek, ljudi",0
+315,Sad~a,صَدَّ,sadda,صدد,V,37,"to turn away, hinder","odvraćati, sprječavati",0
+316,suloTa`n,سُلْطَٰن,sultān,سلط,N,37,"authority, proof","vlast, dokaz",0
+317,rad~a,رَدَّ,radda,ردد,V,36,"to return, repel","vratiti, odbiti",0
+318,>aHosan,أَحْسَن,ahsan,حسن,N,36,"best, better","najbolji, bolji",0
+319,say~i_#aAt,سَيِّءَات,sajji'āt,سوا,N,36,evil deeds,loša djela,0
+320,*aAqu,ذَاقُ,zāku,ذوق,V,36,to taste,okusiti,0
+321,*ahaba,ذَهَبَ,zahaba,ذهب,V,35,to go,otići,0
+322,{sotawaY`^,ٱسْتَوَىٰٓ,istavā,سوي,V,35,"to rise over, be even",uzdići se; izravnati,0
+323,sajada,سَجَدَ,sadžada,سجد,V,35,to prostrate,"pasti ničice, sedždu činiti",0
+324,mata`E,مَتَٰع,matā',متع,N,35,"enjoyment, provision","uživanje, korist",0
+325,Hiyn,حِين,hīn,حين,N,35,"time, while","vrijeme, čas",0
+326,nasiYa,نَسِىَ,nasija,نسي,V,35,to forget,zaboraviti,0
+327,bay~anu,بَيَّنُ,bajjanu,بين,V,35,to make clear,"objasniti, razjasniti",0
+328,<ivom,إِثْم,ism,اثم,N,35,sin,grijeh,0
+329,naSiyr,نَصِير,nasīr,نصر,N,35,helper,pomagač,0
+330,{xotalafa,ٱخْتَلَفَ,ihtalafa,خلف,V,35,to differ,razilaziti se,0
+331,m~urosal,مُرْسَل,mursal,رسل,N,35,sent (messenger),poslani,0
+332,>um~,أُمّ,umm,امم,N,35,mother,majka,0
+333,maroyam,مَرْيَم,Marjam,,PN,34,Mary,Merjema,0
+334,fitonap,فِتْنَة,fitna,فتن,N,34,"trial, temptation","iskušenje, smutnja",0
+335,{botagaY`,ٱبْتَغَىٰ,ibtagā,بغي,V,34,to seek,"tražiti, težiti",0
+336,'aAlaA^',ءَالَآء,ālā',الو,N,34,"favours, bounties",blagodati,0
+337,qaAma,قَامَ,kāma,قوم,V,33,"to stand, rise","stajati, ustati",0
+338,fariyq,فَرِيق,farīk,فرق,N,33,"group, party",skupina,0
+339,HaraAm,حَرَام,harām,حرم,ADJ,33,"forbidden, sacred","zabranjen, svet",0
+340,$amos,شَمْس,šams,شمس,N,33,sun,sunce,0
+341,n~aEam,نَعَم,na'am,نعم,N,33,"cattle, livestock",stoka,0
+342,ka*ib,كَذِب,kazib,كذب,N,33,"lie, falsehood",laž,0
+343,kal~aA,كَلَّا,kallā,,AVR,33,no! by no means,ne! nikako,0
+344,xa`siriyn,خَٰسِرِين,hāsirīn,خسر,N,32,the losers,gubitnici,0
+345,zakaw`p,زَكَوٰة,zakā,زكو,N,32,"alms, zakat","zekat, milostinja",0
+346,kafaY`,كَفَىٰ,kafā,كفي,V,32,to suffice,"dostatan biti, dovoljan biti",0
+347,ka`*ib,كَٰذِب,kāzib,كذب,N,32,liar,lažljivac,0
+348,nahaY`,نَهَىٰ,nahā,نهي,V,32,to forbid,zabraniti,0
+349,Ea`qibap,عَٰقِبَة,'ākiba,عقب,N,32,"end, outcome","kraj, ishod",0
+350,>aEoraDa,أَعْرَضَ,a'rada,عرض,V,32,to turn away,"okrenuti se, odvratiti se",0
+351,>a$ad~,أَشَدّ,ašadd,شدد,N,31,"stronger, more severe","jači, žešći",0
+352,nafaEa,نَفَعَ,nafa'a,نفع,V,31,to benefit,koristiti,0
+353,<i*FA,إِذًا,izan,,SUR,31,"then, in that case","onda, u tom slučaju",0
+354,wa`Hidap,وَٰحِدَة,vāhida,وحد,N,31,one (f.),jedna,0
+355,wa`Hid,وَٰحِد,vāhid,وحد,ADJ,30,one,jedan,0
+356,quw~ap,قُوَّة,kuvva,قوي,N,30,"strength, power","snaga, moć",0
+357,wal~aY`,وَلَّىٰ,vallā,ولي,V,30,"to turn, turn away","okrenuti, okrenuti se",0
+358,EasaY,عَسَى,'asā,عسي,V,30,perhaps,možda,0
+359,$ar~,شَرّ,šarr,شرر,N,30,evil,zlo,0
+360,mala>,مَلَأ,mala',ملا,N,30,"chiefs, assembly","glavešine, velikaši",0
+361,labiva,لَبِثَ,labisa,لبث,V,30,"to remain, stay","ostati, boraviti",0
+362,Hukom,حُكْم,hukm,حكم,N,30,"judgement, wisdom","sud, presuda",0
+363,saA^'a,سَآءَ,sā'a,سوا,V,30,"to be bad, evil",biti loš,0
+364,kariym,كَرِيم,karīm,كرم,ADJ,30,"noble, generous",plemenit,0
+365,>aboSara,أَبْصَرَ,absara,بصر,V,29,"to see, perceive","vidjeti, uvidjeti",0
+366,Eahod,عَهْد,'ahd,عهد,N,29,"covenant, pledge","zavjet, ugovor",0
+367,Hayov,حَيْث,hajs,حيث,N,29,"where, wherever","gdje, gdje god",0
+368,ka>an~,كَأَنّ,ka'ann,,ACC,29,as if,kao da,0
+369,riyH,رِيح,rīh,روح,N,29,wind,vjetar,0
+370,jund,جُند,džund,جند,N,29,"army, host",vojska,0
+371,Earo$,عَرْش,'arš,عرش,N,29,throne,"Arš, prijestolje",0
+372,rajul,رَجُل,radžul,رجل,N,29,man,"čovjek, muškarac",0
+373,naba>,نَبَأ,naba',نبا,N,29,"news, tidings",vijest,0
+374,>abadFA,أَبَدًا,abadan,ابد,T,28,"ever, forever",nikada; zauvijek,0
+375,siHor,سِحْر,sihr,سحر,N,28,magic,"čarolija, sihr",0
+376,masojid,مَسْجِد,masdžid,سجد,N,28,mosque,"džamija, mesdžid",0
+377,*ur~iy~ap,ذُرِّيَّة,zurrijja,ذرر,N,28,offspring,potomstvo,0
+378,maSiyr,مَصِير,masīr,صير,N,28,destination,"odredište, povratak",0
+379,>aSolaHa,أَصْلَحَ,aslaha,صلح,V,28,"to reform, make right","popraviti, poboljšati",0
+380,m~agofirap,مَغْفِرَة,magfira,غفر,N,28,forgiveness,oprost,0
+381,{sotajaAba,ٱسْتَجَابَ,istadžāba,جوب,V,28,"to respond, answer",odazvati se,0
+382,Hasanap,حَسَنَة,hasana,حسن,N,28,good deed,dobro djelo,0
+383,>an~aY`,أَنَّىٰ,annā,اني,INTG,28,how; whence,kako; otkuda,0
+384,rijaAl,رِجَال,ridžāl,رجل,N,28,men,"ljudi, muškarci",0
+385,r~aHima,رَحِمَ,rahima,رحم,V,28,to have mercy,smilovati se,0
+386,>agonato,أَغْنَتْ,agnat,غني,V,28,to avail,"koristiti, pomoći",0
+387,kalimap,كَلِمَة,kalima,كلم,N,28,word,riječ,0
+388,>aSobaHa,أَصْبَحَ,asbaha,صبح,V,28,to become,postati,0
+389,Hadiyv,حَدِيث,hadīs,حدث,N,28,"discourse, narration","govor, kazivanje",0
+390,sawaA^',سَوَآء,savā',سوي,N,27,"equal, alike","isto, svejedno",0
+391,kaAfir,كَافِر,kāfir,كفر,N,27,disbeliever,nevjernik,0
+392,EafaA,عَفَا,'afā,عفو,V,27,to pardon,"oprostiti, preći preko",0
+393,baAb,بَاب,bāb,بوب,N,27,"door, gate",vrata,0
+394,EaSaA,عَصَا,'asā,عصي,V,27,to disobey,ne pokoravati se,0
+395,ga`fil,غَٰفِل,gāfil,غفل,N,27,heedless,nemaran,0
+396,qad~ama,قَدَّمَ,kaddama,قدم,V,27,to send ahead,"poslati naprijed, unaprijed",0
+397,>afolaHa,أَفْلَحَ,aflaha,فلح,V,27,"to succeed, prosper",uspjeti,0
+398,ja`hada,جَٰهَدَ,džāhada,جهد,V,27,to strive,"boriti se, truditi se",0
+399,m~akaAn,مَكَان,makān,كون,N,27,place,mjesto,0
+400,muna`fiquwn,مُنَٰفِقُون,munāfikūn,نفق,N,27,hypocrites,"licemjeri, munafici",0
+401,qamar,قَمَر,kamar,قمر,N,27,moon,mjesec (nebeski),0
+402,yuwsuf,يُوسُف,Jūsuf,,PN,27,Joseph,Jusuf,0
+403,luwT,لُوط,Lūt,,PN,27,Lot,Lut,0
+404,maA*aA,مَاذَا,māzā,,INTG,26,what?,šta?,0
+405,xawof,خَوْف,havf,خوف,N,26,fear,strah,0
+406,ba`Til,بَٰطِل,bātil,بطل,N,26,falsehood,"laž, neistina",0
+407,'aAl,ءَال,āl,اول,N,26,"family, people of","porodica, rod",0
+408,jaHiym,جَحِيم,džahīm,جحم,N,26,Hellfire,"džehim, pakao",0
+409,>ajomaEiyn,أَجْمَعِين,adžma'īn,جمع,N,26,all together,svi zajedno,0
+410,qariyb,قَرِيب,karīb,قرب,ADJ,26,near,blizu,0
+411,zay~ana,زَيَّنَ,zajjana,زين,V,26,"to adorn, make attractive","uljepšati, ukrasiti",0
+412,{mora>at,ٱمْرَأَت,imra'at,مرا,N,26,"woman, wife","žena, supruga",0
+413,kayod,كَيْد,kajd,كيد,N,26,"plot, scheme",spletka,0
+414,vamuwd,ثَمُود,Samūd,,PN,26,Thamud,Semud,0
+415,ya$oEuru,يَشْعُرُ,jaš'uru,شعر,V,25,"to perceive, sense","osjetiti, primijetiti",0
+416,xalaA,خَلَا,halā,خلو,V,25,to pass; be alone,proći; osamiti se,0
+417,m~iyva`q,مِيثَٰق,mīsāk,وثق,N,25,covenant,"ugovor, zavjet",0
+418,A^dam,آدَم,Ādam,,PN,25,Adam,Adem,0
+419,EiysaY,عِيسَى,'īsā,,PN,25,Jesus,Isa,0
+420,junaAH,جُنَاح,džunāh,جنح,N,25,"blame, sin","grijeh, krivica",0
+421,baEiyd,بَعِيد,ba'īd,بعد,ADJ,25,far,dalek,0
+422,ba>os,بَأْس,ba's,باس,N,25,"might, harm","sila, nevolja",0
+423,qadara,قَدَرَ,kadara,قدر,V,25,"to decree, measure","odrediti, mjeriti",0
+424,lisaAn,لِسَان,lisān,لسن,N,25,"tongue, language",jezik,0
+425,bagaY`,بَغَىٰ,bagā,بغي,V,25,"to transgress, seek",prekoračiti; tražiti,0
+426,ja`dalu,جَٰدَلُ,džādalu,جدل,V,25,to dispute,"raspravljati, prepirati se",0
+427,<iy~aA,إِيَّا,ijjā,,PRON,24,(object pronoun: only),"(samo) Tebe, njega",0
+428,kaAda,كَادَ,kāda,كود,V,24,to almost,"gotovo, umalo",0
+429,TaEaAm,طَعَام,ta'ām,طعم,N,24,food,hrana,0
+430,waraA^',وَرَآء,varā',وري,LOC,24,behind,iza,0
+431,Hay~,حَيّ,hajj,حيي,N,24,"living, alive",živi,0
+432,>unvaY`,أُنثَىٰ,unsā,انث,N,24,female,žensko,0
+433,>akobar,أَكْبَر,akbar,كبر,N,24,"greater, greatest","veći, najveći",0
+434,tawaf~aY`,تَوَفَّىٰ,tavaffā,وفي,V,24,to take (in death),"uzeti (dušu), usmrtiti",0
+435,ganiY~,غَنِىّ,ganijj,غني,N,24,"rich, self-sufficient","bogat, neovisan",0
+436,TaA^}ifap,طَآئِفَة,tā'ifa,طوف,N,24,group,skupina,0
+437,wakiyl,وَكِيل,vakīl,وكل,N,24,"guardian, trustee","zaštitnik, skrbnik",0
+438,liqaA^',لِقَآء,likā',لقي,N,24,meeting,susret,0
+439,EaAd2,عَاد,'ād,عود,PN,24,Aad,Ad,0
+440,Zuluma`t,ظُلُمَٰت,zulumāt,ظلم,N,23,darknesses,tmine,0
+441,saboE,سَبْع,sab',سبع,N,23,seven,sedam,0
+442,<im~aA,إِمَّا,immā,,EXL,23,"either, or","ili, bilo",0
+443,>anjaY`,أَنجَىٰ,andžā,نجو,V,23,to save,spasiti,0
+444,saAjid,سَاجِد,sādžid,سجد,N,23,prostrating,onaj koji sedždu čini,0
+445,bad~ala,بَدَّلَ,baddala,بدل,V,23,"to change, replace","zamijeniti, promijeniti",0
+446,yatiym,يَتِيم,jatīm,يتم,N,23,orphan,siroče,0
+447,misokiyn,مِسْكِين,miskīn,سكن,N,23,"poor, needy",siromah,0
+448,laEana,لَعَنَ,la'ana,لعن,V,23,to curse,prokleti,0
+449,$aha`dap,شَهَٰدَة,šahāda,شهد,N,23,testimony,svjedočenje,0
+450,fulok,فُلْك,fulk,فلك,N,23,ship,lađa,0
+451,*aA,ذَا,zā,,N,23,this; owner of,ovaj; vlasnik,0
+452,>a*ina,أَذِنَ,azina,اذن,V,23,to permit; listen,dozvoliti; poslušati,0
+453,fatanu,فَتَنُ,fatanu,فتن,V,23,"to tempt, put to trial","iskušavati, na kušnju staviti",0
+454,qaron,قَرْن,karn,قرن,N,23,generation,"naraštaj, pokoljenje",0
+455,*ikoraY`,ذِكْرَىٰ,zikrā,ذكر,N,23,reminder,"opomena, podsjećanje",0
+456,samoE,سَمْع,sam',سمع,N,22,hearing,sluh,0
+457,rafaEa,رَفَعَ,rafa'a,رفع,V,22,to raise,"uzdići, podići",0
+458,xalof,خَلْف,half,خلف,N,22,"behind, after","iza, poslije",0
+459,balaY`,بَلَىٰ,balā,,ANS,22,yes indeed,"da, svakako",0
+460,say~i}ap,سَيِّئَة,sajji'a,سوا,N,22,evil deed,loše djelo,0
+461,>asolama,أَسْلَمَ,aslama,سلم,V,22,to submit,"predati se, primiti islam",0
+462,duEaA^',دُعَآء,du'ā',دعو,N,22,supplication,"dova, molba",0
+463,naSor,نَصْر,nasr,نصر,N,22,"help, victory","pomoć, pobjeda",0
+464,yarojuwA@,يَرْجُوا۟,jardžuvā,رجو,V,22,to hope,nadati se,0
+465,wahaba,وَهَبَ,vahaba,وهب,V,22,"to grant, bestow",darovati,0
+466,jamaEa,جَمَعَ,džama'a,جمع,V,22,to gather,sakupiti,0
+467,makara,مَكَرَ,makara,مكر,V,22,to plot,spletkariti,0
+468,ma>owaY`,مَأْوَىٰ,ma'vā,اوي,N,22,"refuge, abode","utočište, boravište",0
+469,bar~,بَرّ,barr,برر,N,22,righteousness; land,dobročinstvo; kopno,0
+470,m~u&omina`t,مُؤْمِنَٰت,mu'mināt,امن,N,22,believing women,vjernice,0
+471,>a*aAqa,أَذَاقَ,azāka,ذوق,V,22,to make taste,dati okusiti,0
+472,jin~,جِنّ,džinn,جنن,N,22,jinn,džini,0
+473,sa`Hir,سَٰحِر,sāhir,سحر,N,22,magician,čarobnjak,0
+474,sax~ara,سَخَّرَ,sahhara,سخر,V,22,"to subject, subdue",potčiniti,0
+475,mufosid,مُفْسِد,mufsid,فسد,N,21,corrupter,onaj koji nered čini,0
+476,{sotuhozi}a,ٱسْتُهْزِئَ,istuhzi'a,هزا,V,21,to be mocked,biti ismijavan,0
+477,{$otaraY`,ٱشْتَرَىٰ,ištarā,شري,V,21,"to buy, exchange","kupiti, zamijeniti",0
+478,>aEomaY`,أَعْمَىٰ,a'mā,عمي,N,21,blind,slijep,0
+479,m~a$a,مَشَ,maša,مشي,V,21,to walk,hodati,0
+480,>amaAta,أَمَاتَ,amāta,موت,V,21,to cause to die,usmrtiti,0
+481,katama,كَتَمَ,katama,كتم,V,21,to conceal,sakriti,0
+482,Tay~iba`t,طَيِّبَٰت,tajjibāt,طيب,N,21,good things,"dobre stvari, lijepa jela",0
+483,ruwH,رُوح,rūh,روح,N,21,spirit,duh,0
+484,$ahor,شَهْر,šahr,شهر,N,21,month,mjesec (u godini),0
+485,>aHosana,أَحْسَنَ,ahsana,حسن,V,21,to do good,dobro činiti,0
+486,naSiyb,نَصِيب,nasīb,نصب,N,21,"share, portion","udio, dio",0
+487,kam,كَم,kam,,INTG,21,"how many, how much",koliko,0
+488,Hasan,حَسَن,hasan,حسن,ADJ,21,good,"dobar, lijep",0
+489,m~usam~FY,مُسَمًّى,musamman,سمو,N,21,"named, appointed","imenovan, određen",0
+490,waDaEa,وَضَعَ,vada'a,وضع,V,21,"to put, place","staviti, položiti",0
+491,$aAhid,شَاهِد,šāhid,شهد,N,21,witness,svjedok,0
+492,m~uka*~ibiyn,مُكَذِّبِين,mukazzibīn,كذب,N,21,deniers,poricatelji,0
+493,Zan~,ظَنّ,zann,ظنن,N,21,"thought, conjecture","mišljenje, nagađanje",0
+494,>aEad~a,أَعَدَّ,a'adda,عدد,V,20,to prepare,pripremiti,0
+495,Earafa,عَرَفَ,'arafa,عرف,V,20,"to know, recognise","prepoznati, znati",0
+496,saEaY`,سَعَىٰ,sa'ā,سعي,V,20,"to strive, run","truditi se, žuriti",0
+497,kal~ama,كَلَّمَ,kallama,كلم,V,20,to speak to,govoriti (s kim),0
+498,Hikomap,حِكْمَة,hikma,حكم,N,20,wisdom,mudrost,0
+499,SaAbir,صَابِر,sābir,صبر,N,20,patient,strpljiv,0
+500,balawo,بَلَوْ,balav,بلو,V,20,to test,iskušati,0
+501,>aHal~a,أَحَلَّ,ahalla,حلل,V,20,to make lawful,dozvoliti,0
+502,>amina,أَمِنَ,amina,امن,V,20,"to feel safe, trust","biti siguran, povjeriti",0
+503,EiqaAb,عِقَاب,'ikāb,عقب,N,20,punishment,kazna,0
+504,ha`ruwn,هَٰرُون,Hārūn,,PN,20,Aaron,Harun,0
+505,laday,لَدَي,ladaj,,LOC,20,"with, at","kod, pri",0
+506,Zulom,ظُلْم,zulm,ظلم,N,20,"wrongdoing, injustice","nepravda, nasilje",0
+507,qaS~a,قَصَّ,kassa,قصص,V,20,to narrate,"kazivati, pripovijedati",0
+508,>aqosamu,أَقْسَمُ,aksamu,قسم,V,20,to swear,zakleti se,0
+509,Hizob,حِزْب,hizb,حزب,N,20,"party, faction","stranka, skupina",0
+510,>an$a>a,أَنشَأَ,anša'a,نشا,V,20,"to produce, create","stvoriti, proizvesti",0
+511,Hamiym,حَمِيم,hamīm,حمم,N,20,boiling water; close friend,ključala voda; prisni prijatelj,0
+512,taEa`laY`,تَعَٰلَىٰ,ta'ālā,علو,V,20,exalted is He,uzvišen je,0
+513,Haq~a,حَقَّ,hakka,حقق,V,20,"to be due, deserved","obistiniti se, zaslužiti",0
+514,sabaqa,سَبَقَ,sabaka,سبق,V,20,"to precede, outstrip","prethoditi, preteći",0
+515,$ajarap,شَجَرَة,šadžara,شجر,N,19,tree,"drvo, stablo",0
+516,muSad~iq,مُصَدِّق,musaddik,صدق,N,19,confirming,potvrđujući,0
+517,m~uEoriDuwn,مُعْرِضُون,mu'ridūn,عرض,N,19,those who turn away,oni koji se okreću,0
+518,yaDur~a,يَضُرَّ,jadurra,ضرر,V,19,to harm,štetiti,0
+519,>ayon,أَيْن,ajn,,INTG,19,where?,gdje?,0
+520,>aqorab,أَقْرَب,akrab,قرب,N,19,"nearer, nearest","bliži, najbliži",0
+521,mar~ap,مَرَّة,marra,مرر,N,19,"time, once",put (jednom),0
+522,Tayor,طَيْر,tajr,طير,N,19,bird,ptica,0
+523,nafaxa,نَفَخَ,nafaha,نفخ,V,19,"to blow, breathe","puhnuti, udahnuti",0
+524,fawoz,فَوْز,favz,فوز,N,19,success,uspjeh,0
+525,yafoqahu,يَفْقَهُ,jafkahu,فقه,V,19,to understand,razumjeti,0
+526,Dur~,ضُرّ,durr,ضرر,N,19,"harm, adversity","šteta, nevolja",0
+527,{sotaEojala,ٱسْتَعْجَلَ,ista'džala,عجل,V,19,"to hasten, ask to hasten",požurivati,0
+528,ziynap,زِينَة,zīna,زين,N,19,adornment,ukras,0
+529,makor,مَكْر,makr,مكر,N,19,"plot, scheming",spletka,0
+530,rayob,رَيْب,rajb,ريب,N,18,doubt,sumnja,0
+531,>u*unN,أُذُنٌ,uzunun,اذن,N,18,ear,uho,0
+532,>awofaY`,أَوْفَىٰ,avfā,وفي,V,18,to fulfil,ispuniti,0
+533,>asar~a,أَسَرَّ,asarra,سرر,V,18,to conceal,"sakriti, tajiti",0
+534,tabay~ana,تَبَيَّنَ,tabajjana,بين,V,18,to become clear,postati jasno,0
+535,m~at~aEo,مَتَّعْ,matta',متع,V,18,to let enjoy,dati da uživa,0
+536,daA^b~ap,دَآبَّة,dābba,دبب,N,18,"creature, animal","životinja, stvorenje",0
+537,ra>os,رَأْس,ra's,راس,N,18,head,glava,0
+538,darajap,دَرَجَة,daradža,درج,N,18,"degree, rank",stepen,0
+539,>amosaka,أَمْسَكَ,amsaka,مسك,V,18,"to hold, withhold","držati, zadržati",0
+540,niEoma,نِعْمَ,ni'ma,نعم,V,18,how excellent,kako je lijepo,0
+541,>uxofiYa,أُخْفِىَ,uhfija,خفي,V,18,to be hidden,biti skriven,0
+542,waf~aY`^,وَفَّىٰٓ,vaffā,وفي,V,18,to pay in full,isplatiti u potpunosti,0
+543,EaAda,عَادَ,'āda,عود,V,18,to return,vratiti se,0
+544,*uk~ira,ذُكِّرَ,zukkira,ذكر,V,18,to be reminded,biti opomenut,0
+545,mawolaY`,مَوْلَىٰ,mavlā,ولي,N,18,"protector, master","zaštitnik, gospodar",0
+546,t~aworaY`p,تَوْرَىٰة,Tavrā,,PN,18,Torah,Tevrat,0
+547,l~adun,لَدُن,ladun,لدن,N,18,"from, at (with)","od, kod",0
+548,*akar,ذَكَر,zakar,ذكر,N,18,male,muško,0
+549,munkar,مُنكَر,munkar,نكر,N,18,"wrong, evil","ružno, zlo",0
+550,dubur,دُبُر,dubur,دبر,N,18,back,leđa,0
+551,Ea`lim,عَٰلِم,'ālim,علم,N,18,knower,"znalac, onaj koji zna",0
+552,<ins,إِنس,ins,انس,N,18,mankind,ljudi,0
+553,>uEiydu,أُعِيدُ,u'īdu,عود,V,18,"to bring back, repeat","vratiti, ponoviti",0
+554,>anoEama,أَنْعَمَ,an'ama,نعم,V,17,to bestow favour,obasuti blagodatima,0
+555,m~uhotaduwn,مُهْتَدُون,muhtadūn,هدي,N,17,rightly guided,upućeni,0
+556,Hawol,حَوْل,havl,حول,N,17,around,"oko, okolo",0
+557,faD~ala,فَضَّلَ,faddala,فضل,V,17,"to prefer, favour","dati prednost, odlikovati",0
+558,>ugoriqu,أُغْرِقُ,ugriku,غرق,V,17,to drown,potopiti,0
+559,>aHaATa,أَحَاطَ,ahāta,حوط,V,17,to encompass,obuhvatiti,0
+560,wad~a,وَدَّ,vadda,ودد,V,17,"to wish, love","željeti, voljeti",0
+561,sulayoma`n,سُلَيْمَٰن,Sulajmān,,PN,17,Solomon,Sulejman,0
+562,>ahowaA^',أَهْوَآء,ahvā',هوي,N,17,"desires, whims","prohtjevi, strasti",0
+563,<isoHaAq,إِسْحَاق,Ishāk,,PN,17,Isaac,Ishak,0
+564,{nqalaba,ٱنقَلَبَ,inkalaba,قلب,V,17,to turn back,"okrenuti se, vratiti se",0
+565,baTon,بَطْن,batn,بطن,N,17,belly,"trbuh, utroba",0
+566,taqowaY,تَقْوَى,takvā,وقي,N,17,"piety, God-consciousness",bogobojaznost,0
+567,kariha,كَرِهَ,kariha,كره,V,17,"to hate, dislike","mrziti, ne voljeti",0
+568,yatafak~aru,يَتَفَكَّرُ,jatafakkaru,فكر,V,17,to reflect,razmišljati,0
+569,turaAb,تُرَاب,turāb,ترب,N,17,"dust, soil","prašina, zemlja",0
+570,Hamiyd,حَمِيد,hamīd,حمد,ADJ,17,praiseworthy,hvaljeni,0
+571,ta>owiyl,تَأْوِيل,ta'vīl,اول,N,17,interpretation,tumačenje,0
+572,qaA^}im,قَآئِم,kā'im,قوم,N,17,standing,onaj koji stoji,0
+573,fa`Hi$ap,فَٰحِشَة,fāhiša,فحش,N,17,indecency,"razvrat, sramota",0
+574,banaAt,بَنَات,banāt,بني,N,17,daughters,kćeri,0
+575,HusonaY`,حُسْنَىٰ,husnā,حسن,N,17,the best (f.),"najljepše, najbolje",0
+576,naEiym,نَعِيم,na'īm,نعم,N,17,bliss,"blagodat, uživanje",0
+577,faS~ala,فَصَّلَ,fassala,فصل,V,17,to explain in detail,podrobno objasniti,0
+578,>adoraY`,أَدْرَىٰ,adrā,دري,V,17,to make known,obznaniti,0
+579,vamara`t,ثَمَرَٰت,samarāt,ثمر,N,16,fruits,plodovi,0
+580,>an[bata,أَنۢبَتَ,anbata,نبت,V,16,to cause to grow,dati da raste,0
+581,fataHa,فَتَحَ,fataha,فتح,V,16,to open; judge,otvoriti; presuditi,0
+582,qurobaY`,قُرْبَىٰ,kurbā,قرب,N,16,"kinship, relatives",rodbina,0
+583,>aZolam,أَظْلَم,azlam,ظلم,N,16,more unjust,nepravedniji,0
+584,>atam~a,أَتَمَّ,atamma,تمم,V,16,to complete,"dovršiti, upotpuniti",0
+585,yaEoquwb,يَعْقُوب,Ja'kūb,,PN,16,Jacob,Jakub,0
+586,Tay~ib,طَيِّب,tajjib,طيب,ADJ,16,"good, pure","dobar, čist",0
+587,>aloba`b,أَلْبَٰب,albāb,لبب,N,16,understanding (minds),razum (razumni),0
+588,{ntahaY`,ٱنتَهَىٰ,intahā,نهي,V,16,"to desist, end","prestati, odustati",0
+589,waqaY`,وَقَىٰ,vakā,وقي,V,16,to protect,"sačuvati, zaštititi",0
+590,haAjara,هَاجَرَ,hādžara,هجر,V,16,to emigrate,iseliti se,0
+591,basaTa,بَسَطَ,basata,بسط,V,16,"to spread, extend","pružiti, raširiti",0
+592,daAwud,دَاوُد,Dāvud,,PN,16,David,Davud,0
+593,marojiE,مَرْجِع,mardži',رجع,N,16,return,povratak,0
+594,fariHa,فَرِحَ,fariha,فرح,V,16,to rejoice,radovati se,0
+595,sun~ap,سُنَّة,sunna,سنن,N,16,"way, practice","običaj, zakon (sunnet)",0
+596,saAra,سَارَ,sāra,سير,V,16,to travel,putovati,0
+597,man~a,مَنَّ,manna,منن,V,16,to bestow favour,"darovati, blagodat dati",0
+598,saEiyr,سَعِير,sa'īr,سعر,N,16,blazing fire,"plamen, buktinja",0
+599,xasira,خَسِرَ,hasira,خسر,V,16,to lose,"izgubiti, propasti",0
+600,>ufika,أُفِكَ,ufika,افك,V,16,to be turned away,biti odvraćen,0
+601,{sotamaEa,ٱسْتَمَعَ,istama'a,سمع,V,16,to listen,"slušati, prisluškivati",0
+602,fu&aAd,فُؤَاد,fu'ād,فاد,N,16,heart,srce,0
+603,miyzaAn,مِيزَان,mīzān,وزن,N,16,"balance, scale","vaga, mjera",0
+604,qara>a,قَرَأَ,kara'a,قرا,V,16,"to read, recite","čitati, učiti",0
+605,qad~ara,قَدَّرَ,kaddara,قدر,V,16,"to measure, decree","odmjeriti, odrediti",0
+606,>afosadu,أَفْسَدُ,afsadu,فسد,V,15,to corrupt,nered činiti,0
+607,kul~amaA,كُلَّمَا,kullamā,كلل,T,15,whenever,kad god,0
+608,yubodiYa,يُبْدِىَ,jubdija,بدو,V,15,"to show, reveal","pokazati, otkriti",0
+609,sakana,سَكَنَ,sakana,سكن,V,15,to dwell,"stanovati, nastaniti se",0
+610,Sabor,صَبْر,sabr,صبر,N,15,patience,strpljivost,0
+611,$ariba,شَرِبَ,šariba,شرب,V,15,to drink,piti,0
+612,{EotadaY`,ٱعْتَدَىٰ,i'tadā,عدو,V,15,to transgress,"prekoračiti, prijestup činiti",0
+613,naSoraAniy~,نَصْرَانِيّ,Nasrānijj,نصر,PN,15,Christian,kršćanin,0
+614,bu$oraY`,بُشْرَىٰ,bušrā,بشر,N,15,good news,radosna vijest,0
+615,Zahor,ظَهْر,zahr,ظهر,N,15,back,leđa,0
+616,mil~ap,مِلَّة,milla,ملل,N,15,"religion, creed","vjera, vjerozakon",0
+617,Sadaqa,صَدَقَ,sadaka,صدق,V,15,to be truthful,istinu govoriti,0
+618,mun*ir,مُنذِر,munzir,نذر,N,15,warner,opominjatelj,0
+619,Haliym,حَلِيم,halīm,حلم,ADJ,15,forbearing,blag,0
+620,waEaZo,وَعَظْ,va'az,وعظ,V,15,to admonish,"savjetovati, opominjati",0
+621,malik,مَلِك,malik,ملك,N,15,king,"kralj, vladar",0
+622,galabu,غَلَبُ,galabu,غلب,V,15,to overcome,"nadvladati, pobijediti",0
+623,>atobaEa,أَتْبَعَ,atba'a,تبع,V,15,"to pursue, follow","slijediti, goniti",0
+624,qisoT,قِسْط,kist,قسط,N,15,justice,pravda,0
+625,bala`g,بَلَٰغ,balāg,بلغ,N,15,"message, conveying","poruka, dostava",0
+626,gar~a,غَرَّ,garra,غرر,V,15,to deceive,"obmanuti, prevariti",0
+627,>uw*iYa,أُوذِىَ,ūzija,اذي,V,15,to be harmed,biti uznemiravan,0
+628,yasiyr,يَسِير,jasīr,يسر,ADJ,15,easy,lahak,0
+629,Haraj,حَرَج,haradž,حرج,N,15,"difficulty, blame","teškoća, krivica",0
+630,>ax~ara,أَخَّرَ,ahhara,اخر,V,15,"to delay, postpone",odgoditi,0
+631,$ak~,شَكّ,šakk,شكك,N,15,doubt,sumnja,0
+632,rijol,رِجْل,ridžl,رجل,N,15,"foot, leg",noga,0
+633,SanaEu,صَنَعُ,sana'u,صنع,V,15,"to make, do","praviti, činiti",0
+634,musorif,مُسْرِف,musrif,سرف,N,15,"extravagant, wasteful",rasipnik,0
+635,>agonaY`,أَغْنَىٰ,agnā,غني,V,15,to enrich; avail,obogatiti; koristiti,0
+636,tanziyl,تَنزِيل,tanzīl,نزل,N,15,"revelation, sending down",objava,0
+637,DaA^l~,ضَآلّ,dāll,ضلل,N,14,astray,zalutali,0
+638,laqu,لَقُ,laku,لقي,V,14,"to meet, find","sresti, naći",0
+639,kalima`t,كَلِمَٰت,kalimāt,كلم,N,14,words,riječi,0
+640,xaA$iE,خَاشِع,hāši',خشع,N,14,humble,"skrušen, ponizan",0
+641,Eadol,عَدْل,'adl,عدل,N,14,justice,pravda,0
+642,gaDab,غَضَب,gadab,غضب,N,14,"anger, wrath",srdžba,0
+643,>axolafu,أَخْلَفُ,ahlafu,خلف,V,14,to break (a promise),prekršiti (obećanje),0
+644,waAlid,وَالِد,vālid,ولد,N,14,"parent, father","roditelj, otac",0
+645,laEonap,لَعْنَة,la'na,لعن,N,14,curse,prokletstvo,0
+646,m~uhiyn,مُهِين,muhīn,هون,ADJ,14,humiliating,ponižavajući,0
+647,>alof,أَلْف,alf,الف,N,14,thousand,hiljada,0
+648,maqaAm,مَقَام,makām,قوم,N,14,"station, place","mjesto, položaj",0
+649,balad,بَلَد,balad,بلد,N,14,"town, land","grad, zemlja",0
+650,$aAkir,شَاكِر,šākir,شكر,N,14,grateful,zahvalan,0
+651,Huduwd,حُدُود,hudūd,حدد,N,14,"limits, bounds",granice,0
+652,{botigaA^',ٱبْتِغَآء,ibtigā',بغي,N,14,seeking,traženje,0
+653,nakaHa,نَكَحَ,nakaha,نكح,V,14,to marry,"oženiti se, vjenčati",0
+654,Halalo,حَلَلْ,halal,حلل,V,14,to be lawful,biti dozvoljen,0
+655,kaf~ara,كَفَّرَ,kaffara,كفر,V,14,"to expiate, remove","izbrisati, oprostiti",0
+656,Sarafa,صَرَفَ,sarafa,صرف,V,14,"to turn away, divert","odvratiti, okrenuti",0
+657,Eadala,عَدَلَ,'adala,عدل,V,14,to be just,biti pravedan,0
+658,>uxot,أُخْت,uht,اخو,N,14,sister,sestra,0
+659,>aEotadato,أَعْتَدَتْ,a'tadat,عتد,V,14,to prepare,pripremiti,0
+660,Zil~,ظِلّ,zill,ظلل,N,14,"shade, shadow","hlad, sjena",0
+661,layot,لَيْت,lajt,,ACC,14,"would that, if only",kamo sreće,0
+662,<i*aA2,إِذَا,izā,,SUR,14,"suddenly, behold","odjednom, kad gle",0
+663,>avar,أَثَر,asar,اثر,N,14,"trace, mark",trag,0
+664,Sidoq,صِدْق,sidk,صدق,N,14,truth,"istina, iskrenost",0
+665,qaAdir,قَادِر,kādir,قدر,N,14,"able, powerful","moćan, sposoban",0
+666,ka$afa,كَشَفَ,kašafa,كشف,V,14,"to remove, uncover","otkloniti, otkriti",0
+667,>amiyn,أَمِين,amīn,امن,ADJ,14,trustworthy,"pouzdan, povjerljiv",0
+668,madiynap,مَدِينَة,madīna,مدن,N,14,city,grad,0
+669,mufoliHuwn,مُفْلِحُون,muflihūn,فلح,N,13,the successful,oni koji uspijevaju,0
+670,m~araD,مَرَض,marad,مرض,N,13,disease,bolest,0
+671,mad~a,مَدَّ,madda,مدد,V,13,"to extend, prolong","pružiti, produžiti",0
+672,saw~aY`,سَوَّىٰ,savvā,سوي,V,13,"to fashion, proportion","oblikovati, uravnotežiti",0
+673,>abaY,أَبَى,abā,ابي,V,13,to refuse,odbiti,0
+674,$afa`Eap,شَفَٰعَة,šafā'a,شفع,N,13,intercession,"zauzimanje, šefat",0
+675,Harov,حَرْث,hars,حرث,N,13,"tilth, crops","usjev, njiva",0
+676,Huson,حُسْن,husn,حسن,N,13,"goodness, beauty","ljepota, dobrota",0
+677,vala`vap,ثَلَٰثَة,salāsa,ثلث,N,13,three,tri,0
+678,qitaAl,قِتَال,kitāl,قتل,N,13,fighting,borba,0
+679,tarab~aSo,تَرَبَّصْ,tarabbas,ربص,V,13,to wait,"čekati, vrebati",0
+680,riDowa`n,رِضْوَٰن,ridvān,رضو,N,13,"pleasure, approval",zadovoljstvo,0
+681,gula`m,غُلَٰم,gulām,غلم,N,13,"boy, youth","dječak, mladić",0
+682,vawaAb,ثَوَاب,savāb,ثوب,N,13,reward,nagrada,0
+683,mavowFY,مَثْوًى,masvan,ثوي,N,13,abode,boravište,0
+684,ga$iya,غَشِيَ,gašija,غشو,V,13,"to cover, overwhelm","prekriti, obaviti",0
+685,jamoE,جَمْع,džam',جمع,N,13,"gathering, multitude","skup, mnoštvo",0
+686,gaAlib,غَالِب,gālib,غلب,N,13,"victorious, dominant","pobjednik, nadmoćan",0
+687,yaSolaY,يَصْلَى,jaslā,صلي,V,13,to burn in,"gorjeti u, pržiti se",0
+688,wariva,وَرِثَ,varisa,ورث,V,13,to inherit,naslijediti,0
+689,zaEama,زَعَمَ,za'ama,زعم,V,13,to claim,tvrditi,0
+690,{vonayon,ٱثْنَيْن,isnajn,ثني,N,13,two,dva,0
+691,>aToEama,أَطْعَمَ,at'ama,طعم,V,13,to feed,nahraniti,0
+692,mak~a,مَكَّ,makka,مكن,V,13,"to establish, give power","utvrditi, dati vlast",0
+693,bagotap,بَغْتَة,bagta,بغت,N,13,suddenly,iznenada,0
+694,n~ajom,نَجْم,nadžm,نجم,N,13,star,zvijezda,0
+695,yaSifu,يَصِفُ,jasifu,وصف,V,13,to describe,opisivati,0
+696,>asomaEa,أَسْمَعَ,asma'a,سمع,V,13,to make hear,dati da čuje,0
+697,Ha`fiZ,حَٰفِظ,hāfiz,حفظ,N,13,"guardian, keeper",čuvar,0
+698,SayoHap,صَيْحَة,sajha,صيح,N,13,"cry, blast","krik, glas",0
+699,yuwqinu,يُوقِنُ,jūkinu,يقن,V,12,to be certain,biti uvjeren,0
+700,>aSam~,أَصَمّ,asamm,صمم,N,12,deaf,gluh,0
+701,quTiEa,قُطِعَ,kuti'a,قطع,V,12,to be cut off,biti odsječen,0
+702,taw~aAb,تَوَّاب,tavvāb,توب,N,12,accepting repentance,onaj koji kajanje prima,0
+703,>adonaY`,أَدْنَىٰ,adnā,دنو,N,12,"nearer, lower","niži, bliži",0
+704,saqaY`,سَقَىٰ,sakā,سقي,V,12,to give to drink,napojiti,0
+705,HaA^j~a,حَآجَّ,hādždža,حجج,V,12,to argue,prepirati se,0
+706,>aEolan,أَعْلَن,a'lan,علن,V,12,to declare openly,javno reći,0
+707,<iHosa`n,إِحْسَٰن,ihsān,حسن,N,12,"excellence, good",dobročinstvo,0
+708,m~anaEa,مَنَعَ,mana'a,منع,V,12,"to prevent, withhold","spriječiti, uskratiti",0
+709,<imaAm,إِمَام,imām,امم,N,12,leader,"vođa, imam",0
+710,<isomaAEiyl,إِسْمَاعِيل,Ismā'īl,,PN,12,Ishmael,Ismail,0
+711,zak~aY`,زَكَّىٰ,zakkā,زكو,V,12,to purify,očistiti,0
+712,{SoTafaY`,ٱصْطَفَىٰ,istafā,صفو,V,12,to choose,odabrati,0
+713,Haniyf,حَنِيف,hanīf,حنف,N,12,"upright, true in faith","pravovjeran, čiste vjere",0
+714,yunZaru,يُنظَرُ,junzaru,نظر,V,12,to be given respite,"biti čekan, respit dobiti",0
+715,laHom,لَحْم,lahm,لحم,N,12,"flesh, meat",meso,0
+716,HabiTa,حَبِطَ,habita,حبط,V,12,to become void,"propasti, biti poništen",0
+717,>aroHaAm,أَرْحَام,arhām,رحم,N,12,wombs,"utrobe, maternice",0
+718,yaHo*aru,يَحْذَرُ,jahzaru,حذر,V,12,to beware,"čuvati se, pazati",0
+719,faqiyr,فَقِير,fakīr,فقر,N,12,poor,siromašan,0
+720,<injiyl,إِنجِيل,Indžīl,,PN,12,Gospel,Indžil,0
+721,Sal~aY`,صَلَّىٰ,sallā,صلو,V,12,"to pray, bless",klanjati; blagosiljati,0
+722,Tiyn,طِين,tīn,طين,N,12,clay,glina,0
+723,>afowa`h,أَفْوَٰه,afvāh,فوه,N,12,mouths,usta,0
+724,Ea`mil,عَٰمِل,'āmil,عمل,N,12,"worker, doer","radnik, onaj koji čini",0
+725,qaEada,قَعَدَ,ka'ada,قعد,V,12,to sit,sjesti,0
+726,>axozayo,أَخْزَيْ,ahzaj,خزي,V,12,to disgrace,"poniziti, osramotiti",0
+727,tadoriY,تَدْرِى,tadrī,دري,V,12,to know,znati,0
+728,Halafo,حَلَفْ,halaf,حلف,V,12,to swear,zakleti se,0
+729,HafiyZ,حَفِيظ,hafīz,حفظ,N,12,"guardian, preserver",čuvar,0
+730,waqaEa,وَقَعَ,vaka'a,وقع,V,12,"to occur, befall","dogoditi se, pasti",0
+731,bariY^',بَرِىٓء,barij',برا,N,12,"innocent, free","nevin, čist (od)",0
+732,fatoH,فَتْح,fath,فتح,N,12,"victory, opening","pobjeda, otvaranje",0
+733,qaT~aEa,قَطَّعَ,katta'a,قطع,V,12,to cut up,"isjeći, raskomadati",0
+734,wizor,وِزْر,vizr,وزر,N,12,burden,teret,0
+735,jaHadu,جَحَدُ,džahadu,جحد,V,12,to deny,poricati,0
+736,xa`liq,خَٰلِق,hālik,خلق,N,12,Creator,Stvoritelj,0
+737,muEojiz,مُعْجِز,mu'džiz,عجز,N,12,"escaping, thwarting",onaj koji izmiče,0
+738,bada>a,بَدَأَ,bada'a,بدا,V,12,to begin,početi,0
+739,>aworava,أَوْرَثَ,avrasa,ورث,V,12,to make inherit,dati u nasljedstvo,0
+740,siniyn,سِنِين,sinīn,سنو,N,12,years,godine,0
+741,xar~a,خَرَّ,harra,خرر,V,12,to fall down,pasti,0
+742,masokan,مَسْكَن,maskan,سكن,N,12,dwelling,"stan, prebivalište",0
+743,{sota_#o*ana,ٱسْتَءْذَنَ,ista'zana,اذن,V,12,to ask permission,tražiti dozvolu,0
+744,kafuwr,كَفُور,kafūr,كفر,ADJ,12,ungrateful,nezahvalan,0
+745,m~awoEid,مَوْعِد,mav'id,وعد,N,12,appointed time,"rok, sastanak",0
+746,TagaY`,طَغَىٰ,tagā,طغي,V,12,to transgress,prevršiti mjeru,0
+747,salaka,سَلَكَ,salaka,سلك,V,12,"to enter, make follow","ući, provesti",0
+748,n~uTofap,نُطْفَة,nutfa,نطف,N,12,drop (of sperm),kap (sjemena),0
+749,ka*aba,كَذَبَ,kazaba,كذب,V,11,to lie,lagati,0
+750,EaraDa,عَرَضَ,'arada,عرض,V,11,"to present, offer","izložiti, ponuditi",0
+751,<iboliys,إِبْلِيس,Iblīs,,PN,11,Iblis,Iblis,0
+752,yaqorabu,يَقْرَبُ,jakrabu,قرب,V,11,to approach,približiti se,0
+753,vaman,ثَمَن,saman,ثمن,N,11,price,cijena,0
+754,labaso,لَبَسْ,labas,لبس,V,11,"to confuse, cover","pomiješati, zamagliti",0
+755,haAdu,هَادُ,hādu,هود,V,11,to be Jewish; return,biti jevrej; vratiti se,0
+756,huzuw,هُزُو,huzū,هزا,N,11,mockery,ismijavanje,0
+757,xizoY,خِزْى,hizj,خزي,N,11,disgrace,"sramota, poniženje",0
+758,bagoy,بَغْي,bagj,بغي,N,11,transgression,"nasilje, prijestup",0
+759,Ea`hada,عَٰهَدَ,'āhada,عهد,V,11,to make a covenant,ugovor sklopiti,0
+760,ma$oriq,مَشْرِق,mašrik,شرق,N,11,east,istok,0
+761,yanaAlu,يَنَالُ,janālu,نيل,V,11,"to attain, reach","dostići, postići",0
+762,waS~aY`,وَصَّىٰ,vassā,وصي,V,11,"to enjoin, bequeath","oporučiti, narediti",0
+763,EaAbid,عَابِد,'ābid,عبد,N,11,worshipper,onaj koji obožava,0
+764,muxoliS,مُخْلِص,muhlis,خلص,N,11,sincere,iskren,0
+765,ra'uwf,رَءُوف,ra'ūf,راف,N,11,"kind, compassionate","blag, samilostan",0
+766,Eid~ap,عِدَّة,'idda,عدد,N,11,"number, waiting period",broj; iddet,0
+767,tamat~aEa,تَمَتَّعَ,tamatta'a,متع,V,11,to enjoy,uživati,0
+768,>aEojaba,أَعْجَبَ,a'džaba,عجب,V,11,"to please, impress","sviđati se, zadiviti",0
+769,fasaAd,فَسَاد,fasād,فسد,N,11,corruption,"nered, pokvarenost",0
+770,Eiz~ap,عِزَّة,'izza,عزز,N,11,"might, honour","moć, čast",0
+771,Hasob,حَسْب,hasb,حسب,N,11,sufficient,dovoljan,0
+772,saxira,سَخِرَ,sahira,سخر,V,11,to mock,rugati se,0
+773,nafoE,نَفْع,naf',نفع,N,11,benefit,korist,0
+774,sir~,سِرّ,sirr,سرر,N,11,secret,tajna,0
+775,qadar,قَدَر,kadar,قدر,N,11,"measure, decree","mjera, odredba",0
+776,DiEof,ضِعْف,di'f,ضعف,N,11,double,dvostruko,0
+777,kaviyrap,كَثِيرَة,kasīra,كثر,ADJ,11,many (f.),mnoga,0
+778,Ealiy~,عَلِيّ,'alijj,علو,N,11,"high, exalted",uzvišen,0
+779,$araAb,شَرَاب,šarāb,شرب,N,11,drink,piće,0
+780,Einab,عِنَب,'inab,عنب,N,11,grapes,grožđe,0
+781,<iHodaY,إِحْدَى,ihdā,احد,N,11,one (f.),jedna,0
+782,naASir,نَاصِر,nāsir,نصر,N,11,helper,pomagač,0
+783,masiyH,مَسِيح,Masīh,,PN,11,Messiah,Mesih,0
+784,>awolaY`,أَوْلَىٰ,avlā,ولي,N,11,"nearer, more worthy","preči, bliži",0
+785,badaA,بَدَا,badā,بدو,V,11,to appear,pojaviti se,0
+786,najowaY`^,نَجْوَىٰٓ,nadžvā,نجو,N,11,secret talk,tajni razgovor,0
+787,>a*ohaba,أَذْهَبَ,azhaba,ذهب,V,11,to take away,"odnijeti, ukloniti",0
+788,hawaA^',هَوَآء,havā',هوي,N,11,air; void,zrak; praznina,0
+789,TabaEa,طَبَعَ,taba'a,طبع,V,11,to seal,zapečatiti,0
+790,$iyEap,شِيعَة,šī'a,شيع,N,11,"sect, followers","sljedba, pristalice",0
+791,naxol,نَخْل,nahl,نخل,N,11,palm tree,palma,0
+792,$uEayob,شُعَيْب,Šu'ajb,,PN,11,Shu'ayb,Šuajb,0
+793,qawiY~,قَوِىّ,kavijj,قوي,N,11,strong,"jak, snažan",0
+794,Eadon,عَدْن,'adn,,PN,11,Eden,Adn,0
+795,banaY`,بَنَىٰ,banā,بني,V,11,to build,graditi,0
+796,>anaAba,أَنَابَ,anāba,نوب,V,11,to turn (to God),obratiti se (Allahu),0
+797,Earabiy~,عَرَبِيّ,'arabijj,عرب,ADJ,11,Arabic,arapski,0
+798,m~aEoluwm,مَعْلُوم,ma'lūm,علم,N,11,known,"poznat, određen",0
+799,majonuwn,مَجْنُون,madžnūn,جنن,N,11,"mad, possessed","lud, opsjednut",0
+800,yas~ara,يَسَّرَ,jassara,يسر,V,11,to make easy,olakšati,0
+801,fa`kihap,فَٰكِهَة,fākiha,فكه,N,11,fruit,voće,0
+802,suwrap,سُورَة,sūra,سور,N,10,"surah, chapter",sura,0
+803,HijaArap,حِجَارَة,hidžāra,حجر,N,10,stones,kamenje,0
+804,yaSilu,يَصِلُ,jasilu,وصل,V,10,"to reach, join","stići, spojiti",0
+805,dam,دَم,dam,دمو,N,10,blood,krv,0
+806,musotaqar~,مُسْتَقَرّ,mustakarr,قرر,N,10,resting place,boravište,0
+807,Eijol,عِجْل,'idžl,عجل,N,10,calf,tele,0
+808,fasaqa,فَسَقَ,fasaka,فسق,V,10,"to rebel, sin","griješiti, ogriješiti se",0
+809,EaSaA2,عَصَا,'asā,عصو,N,10,"staff, rod",štap,0
+810,Tuwr,طُور,tūr,طور,N,10,Mount (Sinai),"Tur, gora",0
+811,Eu*o,عُذْ,'uz,عوذ,V,10,to seek refuge,utočište tražiti,0
+812,jaAhil,جَاهِل,džāhil,جهل,N,10,ignorant,neznalica,0
+813,naba*a,نَبَذَ,nabaza,نبذ,V,10,to cast away,odbaciti,0
+814,magorib,مَغْرِب,magrib,غرب,N,10,west,zapad,0
+815,taqab~ala,تَقَبَّلَ,takabbala,قبل,V,10,to accept,"primiti, prihvatiti",0
+816,>aDaAEu,أَضَاعُ,adā'u,ضيع,V,10,to waste,"upropastiti, zanemariti",0
+817,xayora`t,خَيْرَٰت,hajrāt,خير,N,10,"good things, deeds","dobra, dobra djela",0
+818,m~uSiybap,مُصِيبَة,musība,صوب,N,10,calamity,"nesreća, nevolja",0
+819,m~ariyD,مَرِيض,marīd,مرض,N,10,sick,bolestan,0
+820,libaAs,لِبَاس,libās,لبس,N,10,"garment, clothing",odjeća,0
+821,qatol,قَتْل,katl,قتل,N,10,killing,ubijanje,0
+822,sariyE,سَرِيع,sarī',سرع,N,10,swift,brz,0
+823,>aHaq~,أَحَقّ,ahakk,حقق,N,10,more worthy,"preči, s većim pravom",0
+824,Tal~aqa,طَلَّقَ,tallaka,طلق,V,10,to divorce,razvesti se,0
+825,fi}ap,فِئَة,fi'a,فاي,N,10,"group, band","skupina, četa",0
+826,vab~ato,ثَبَّتْ,sabbat,ثبت,V,10,to make firm,učvrstiti,0
+827,mar~a,مَرَّ,marra,مرر,V,10,to pass by,proći,0
+828,miA}ap,مِائَة,mi'a,ماي,N,10,hundred,sto,0
+829,saEoy,سَعْي,sa'j,سعي,N,10,"effort, striving",trud,0
+830,nazaEa,نَزَعَ,naza'a,نزع,V,10,"to remove, pull out","iščupati, ukloniti",0
+831,yuwliju,يُولِجُ,jūlidžu,ولج,V,10,"to merge, cause to enter","uvesti, utopiti",0
+832,m~uHoDar,مُحْضَر,muhdar,حضر,N,10,brought forth,priveden,0
+833,Ea$iY~,عَشِىّ,'ašijj,عشو,N,10,evening,večer,0
+834,>amad~a,أَمَدَّ,amadda,مدد,V,10,"to extend, supply","produžiti, pružiti",0
+835,kaY,كَى,kā,,SUB,10,so that,da bi,0
+836,{jotabaY`,ٱجْتَبَىٰ,idžtabā,جبي,V,10,to choose,odabrati,0
+837,baxila,بَخِلَ,bahila,بخل,V,10,to be stingy,škrtariti,0
+838,SaAHib,صَاحِب,sāhib,صحب,N,10,companion,drug,0
+839,m~uqiym,مُقِيم,mukīm,قوم,N,10,lasting; establishing,trajan; koji obavlja,0
+840,jab~aAr,جَبَّار,džabbār,جبر,ADJ,10,"tyrant, compeller",silnik,0
+841,Dar~,ضَرّ,darr,ضرر,N,10,harm,šteta,0
+842,rijos,رِجْس,ridžs,رجس,N,10,"filth, abomination","prljavština, gadost",0
+843,HaAqa,حَاقَ,hāka,حيق,V,10,"to encompass, befall","obuhvatiti, snaći",0
+844,lahow,لَهْو,lahv,لهو,N,10,"amusement, distraction","zabava, razonoda",0
+845,Sar~afo,صَرَّفْ,sarraf,صرف,V,10,to explain variously,"izlagati, objašnjavati",0
+846,$afiyE,شَفِيع,šafī',شفع,N,10,intercessor,zagovornik,0
+847,S~uwr,صُور,sūr,صور,N,10,trumpet,"rog, sur",0
+848,faTara,فَطَرَ,fatara,فطر,V,10,"to create, originate",stvoriti (iz ničega),0
+849,zaroE,زَرْع,zar',زرع,N,10,"crops, plants",usjev,0
+850,m~uxotalif,مُخْتَلِف,muhtalif,خلف,N,10,"various, differing","razni, različiti",0
+851,Zahara,ظَهَرَ,zahara,ظهر,V,10,"to appear, prevail","pojaviti se, nadvladati",0
+852,kayol,كَيْل,kajl,كيل,N,10,measure,mjera,0
+853,madoyan,مَدْيَن,Madjan,,PN,10,Midian,Medjen,0
+854,jin~ap,جِنَّة,džinna,جنن,N,10,madness; jinn,ludilo; džini,0
+855,{sotaqa`mu,ٱسْتَقَٰمُ,istakāmu,قوم,V,10,"to be upright, steadfast","biti postojan, ustrajati",0
+856,>aEoraAb,أَعْرَاب,a'rāb,عرب,N,10,Bedouins,beduini,0
+857,'aAminiyn,ءَامِنِين,āminīn,امن,N,10,"safe, secure",sigurni,0
+858,rawa`siY,رَوَٰسِى,ravāsī,رسو,N,10,firm mountains,čvrste planine,0
+859,$akuwr,شَكُور,šakūr,شكر,ADJ,10,grateful,zahvalan,0
+860,>aHoSaY`,أَحْصَىٰ,ahsā,حصي,V,10,"to enumerate, count",prebrojati,0
+861,wa`liday,وَٰلِدَي,vālidaj,ولد,N,10,parents,roditelji,0
+862,Sad~aqa,صَدَّقَ,saddaka,صدق,V,10,"to believe, confirm","povjerovati, potvrditi",0
+863,Tugoya`n,طُغْيَٰن,tugjān,طغي,N,9,transgression,"prevršivanje, tiranija",0
+864,Dala`lap,ضَلَٰلَة,dalāla,ضلل,N,9,misguidance,zabluda,0
+865,tija`rap,تِجَٰرَة,tidžāra,تجر,N,9,trade,trgovina,0
+866,muHiyT,مُحِيط,muhīt,حوط,N,9,encompassing,sveobuhvatni,0
+867,yasotaHoYi.^,يَسْتَحْىِۦٓ,jastahji,حيي,V,9,to be ashamed; spare,stidjeti se; poštedjeti,0
+868,xaliyfap,خَلِيفَة,halīfa,خلف,N,9,"successor, vicegerent","namjesnik, halifa",0
+869,tabiEa,تَبِعَ,tabi'a,تبع,V,9,to follow,slijediti,0
+870,yaqobalu,يَقْبَلُ,jakbalu,قبل,V,9,to accept,primiti,0
+871,rijoz,رِجْز,ridžz,رجز,N,9,"punishment, plague","kazna, pošast",0
+872,m~awoEiZap,مَوْعِظَة,mav'iza,وعظ,N,9,admonition,"pouka, savjet",0
+873,lawon,لَوْن,lavn,لون,N,9,colour,boja,0
+874,>ay~ada,أَيَّدَ,ajjada,ايد,V,9,"to support, strengthen","podržati, ojačati",0
+875,far~aqu,فَرَّقُ,farraku,فرق,V,9,"to divide, separate","razdvojiti, podijeliti",0
+876,yahuwdiy~,يَهُودِيّ,Jahūdijj,,PN,9,Jew,jevrej,0
+877,wa`siE,وَٰسِع,vāsi',وسع,N,9,"vast, all-embracing","prostran, neizmjeran",0
+878,ba$iyr,بَشِير,bašīr,بشر,N,9,bearer of good news,donosilac radosne vijesti,0
+879,Tah~ara,طَهَّرَ,tahhara,طهر,V,9,to purify,očistiti,0
+880,saHaAb,سَحَاب,sahāb,سحب,N,9,clouds,oblaci,0
+881,Hub~,حُبّ,hubb,حبب,N,9,love,ljubav,0
+882,sabab,سَبَب,sabab,سبب,N,9,"means, cause","sredstvo, uzrok",0
+883,raqabap,رَقَبَة,rakaba,رقب,N,9,neck; slave,vrat; rob,0
+884,Dar~aA^',ضَرَّآء,darrā',ضرر,N,9,adversity,nevolja,0
+885,SiyaAm,صِيَام,sijām,صوم,N,9,fasting,post,0
+886,Haj~,حَجّ,hadždž,حجج,N,9,pilgrimage,hadž,0
+887,>a*FY,أَذًى,azan,اذي,N,9,"harm, hurt","uznemiravanje, šteta",0
+888,faraDa,فَرَضَ,farada,فرض,V,9,to ordain,propisati,0
+889,muba$~ir,مُبَشِّر,mubaššir,بشر,N,9,bringer of good news,donosilac radosne vijesti,0
+890,mataY`,مَتَىٰ,matā,,INTG,9,when?,kada?,0
+891,yu&aAxi*u,يُؤَاخِذُ,ju'āhizu,اخذ,V,9,to take to task,"kazniti, pozvati na odgovornost",0
+892,lagow,لَغْو,lagv,لغو,N,9,idle talk,prazan govor,0
+893,>arobaEap,أَرْبَعَة,arba'a,ربع,N,9,four,četiri,0
+894,yuDa`Eifu,يُضَٰعِفُ,judā'ifu,ضعف,V,9,to multiply,umnogostručiti,0
+895,EaAm,عَام,'ām,عوم,N,9,year,godina,0
+896,{Toma>an~a,ٱطْمَأَنَّ,itma'anna,طمن,V,9,"to be at rest, reassured",smiriti se,0
+897,xabiyv,خَبِيث,habīs,خبث,N,9,"evil, impure","loš, nečist",0
+898,{rotaAba,ٱرْتَابَ,irtāba,ريب,V,9,to doubt,sumnjati,0
+899,ma_#aAb,مَءَاب,ma'āb,اوب,N,9,return,povratak,0
+900,nabaAt,نَبَات,nabāt,نبت,N,9,"plants, vegetation","rastinje, bilje",0
+901,hunaAlik,هُنَالِك,hunālik,,T,9,"there, then","tamo, tada",0
+902,Tay~ibap,طَيِّبَة,tajjiba,طيب,ADJ,9,good (f.),"dobra, lijepa",0
+903,Eiwaj,عِوَج,'ivadž,عوج,N,9,crookedness,iskrivljenost,0
+904,yusa`riEu,يُسَٰرِعُ,jusāri'u,سرع,V,9,to hasten,žuriti,0
+905,galiyZ,غَلِيظ,galīz,غلظ,ADJ,9,"harsh, thick","grub, žestok",0
+906,>amolaY`,أَمْلَىٰ,amlā,ملو,V,9,to give respite,dati vremena,0
+907,guruwr,غُرُور,gurūr,غرر,N,9,delusion,obmana,0
+908,yatasaA^'alu,يَتَسَآءَلُ,jatasā'alu,سال,V,9,to ask one another,pitati jedni druge,0
+909,{jotanabu,ٱجْتَنَبُ,idžtanabu,جنب,V,9,to avoid,kloniti se,0
+910,juluwd,جُلُود,džulūd,جلد,N,9,skins,kože,0
+911,ramaY`,رَمَىٰ,ramā,رمي,V,9,"to throw, accuse",baciti; optužiti,0
+912,xaADu,خَاضُ,hādu,خوض,V,9,"to plunge, engage in","upuštati se, brbljati",0
+913,EibaAdat,عِبَادَت,'ibādat,عبد,N,9,worship,obožavanje,0
+914,>aDal~,أَضَلّ,adall,ضلل,N,9,more astray,više zalutao,0
+915,>asa`Tiyr,أَسَٰطِير,asātīr,سطر,N,9,"legends, tales","bajke, priče",0
+916,m~aboEuwvuwn,مَبْعُوثُون,mab'ūsūn,بعث,N,9,resurrected,proživljeni,0
+917,yaloEabo,يَلْعَبْ,jal'ab,لعب,V,9,to play,igrati se,0
+918,A^tiy,آتِي,ātī,اتي,N,9,coming,dolazeći,0
+919,gil~,غِلّ,gill,غلل,N,9,rancour,"zloba, mržnja",0
+920,tabaAraka,تَبَارَكَ,tabāraka,برك,V,9,blessed is,blagoslovljen je,0
+921,Sa`liH2,صَٰلِح,Sālih,صلح,PN,9,Salih,Salih,0
+922,Eunuq,عُنُق,'unuk,عنق,N,9,neck,vrat,0
+923,'aAwaY`^,ءَاوَىٰٓ,āvā,اوي,V,9,to shelter,"skloniti, utočište dati",0
+924,sawo',سَوْء,sav',سوا,N,9,evil,zlo,0
+925,rakiba,رَكِبَ,rakiba,ركب,V,9,"to ride, board","jahati, ukrcati se",0
+926,walada,وَلَدَ,valada,ولد,V,9,to beget,roditi,0
+927,faAEil,فَاعِل,fā'il,فعل,N,9,doer,činilac,0
+928,muxolaS,مُخْلَص,muhlas,خلص,ADJ,9,"chosen, sincere",odabrani,0
+929,>aqobala,أَقْبَلَ,akbala,قبل,V,9,to come forward,"prići, okrenuti se",0
+930,qaraAr,قَرَار,karār,قرر,N,9,"settlement, stability","stalnost, boravište",0
+931,Zal~a,ظَلَّ,zalla,ظلل,V,9,"to remain, continue",ostati,0
+932,>aEolaY`,أَعْلَىٰ,a'lā,علو,N,9,most high,najviši,0
+933,jaAnib,جَانِب,džānib,جنب,N,9,side,strana,0
+934,{nTalaqa,ٱنطَلَقَ,intalaka,طلق,V,9,"to set out, depart","krenuti, otići",0
+935,ta*okirap,تَذْكِرَة,tazkira,ذكر,N,9,reminder,opomena,0
+936,qa*afa,قَذَفَ,kazafa,قذف,V,9,"to throw, hurl",baciti,0
+937,yanTiqu,يَنطِقُ,jantiku,نطق,V,9,to speak,govoriti,0
+938,<ifok,إِفْك,ifk,افك,N,9,"slander, falsehood","kleveta, laž",0
+939,faSol,فَصْل,fasl,فصل,N,9,"decision, separation","odluka, razdvajanje",0
+940,SaAEiqap,صَاعِقَة,sā'ika,صعق,N,8,thunderbolt,"grom, munja",0
+941,yahobiTu,يَهْبِطُ,jahbitu,هبط,V,8,to descend,spustiti se,0
+942,raAkiE,رَاكِع,rāki',ركع,N,8,bowing,oni koji ruku' čine,0
+943,bir~,بِرّ,birr,برر,N,8,righteousness,dobročinstvo,0
+944,layolap,لَيْلَة,lajla,ليل,N,8,night,noć,0
+945,xaTiy^_#ap,خَطِيٓءَة,hatī'a,خطا,N,8,"sin, error","grijeh, pogreška",0
+946,_#a`n,ءَٰن,ān,,T,8,now,sada,0
+947,xa$oyap,خَشْيَة,hašja,خشي,N,8,"fear, awe",strahopoštovanje,0
+948,yaTomaEu,يَطْمَعُ,jatma'u,طمع,V,8,"to hope, covet","nadati se, žudjeti",0
+949,Eudowa`n,عُدْوَٰن,'udvān,عدو,N,8,"enmity, aggression",neprijateljstvo,0
+950,xaf~afa,خَفَّفَ,haffafa,خفف,V,8,to lighten,olakšati,0
+951,hawaY`,هَوَىٰ,havā,هوي,V,8,to fall; desire,pasti; željeti,0
+952,buroha`n,بُرْهَٰن,burhān,برهن,N,8,proof,dokaz,0
+953,qaAnit,قَانِت,kānit,قنت,N,8,"obedient, devout","pokoran, predan",0
+954,{botalaY`^,ٱبْتَلَىٰٓ,ibtalā,بلو,V,8,to test,iskušati,0
+955,Eaqib,عَقِب,'akib,عقب,N,8,heel; after,peta; nakon,0
+956,waSiy~ap,وَصِيَّة,vasijja,وصي,N,8,"will, bequest",oporuka,0
+957,>ujiybat,أُجِيبَت,udžībat,جوب,V,8,to be answered,biti uslišan,0
+958,>aboyaD,أَبْيَض,abjad,بيض,N,8,white,bijel,0
+959,miyqa`t,مِيقَٰت,mīkāt,وقت,N,8,appointed time,"rok, određeno vrijeme",0
+960,zaAlat,زَالَت,zālat,زيل,V,8,to cease,prestati,0
+961,{rotad~a,ٱرْتَدَّ,irtadda,ردد,V,8,"to turn back, apostatise","vratiti se, otpasti",0
+962,mana`fiE,مَنَٰفِع,manāfi',نفع,N,8,benefits,koristi,0
+963,qadam,قَدَم,kadam,قدم,N,8,foot,stopalo,0
+964,T~a`guwt,طَٰغُوت,tāgūt,طغي,N,8,"false gods, tyranny","tagut, lažna božanstva",0
+965,Sadaqa`t,صَدَقَٰت,sadakāt,صدق,N,8,charities,"sadake, milostinje",0
+966,DaEiyf,ضَعِيف,da'īf,ضعف,N,8,weak,slab,0
+967,*ahab,ذَهَب,zahab,ذهب,N,8,gold,zlato,0
+968,<isola`m,إِسْلَٰم,Islām,سلم,PN,8,Islam,islam,0
+969,sam~aY`,سَمَّىٰ,sammā,سمو,V,8,to name,imenovati,0
+970,{xotaSamu,ٱخْتَصَمُ,ihtasamu,خصم,V,8,to dispute,prepirati se,0
+971,muqar~abuwn,مُقَرَّبُون,mukarrabūn,قرب,N,8,those brought near,bliski (Allahu),0
+972,taEaAla,تَعَالَ,ta'āla,علو,V,8,come!,dođi!,0
+973,{zodaAdu,ٱزْدَادُ,izdādu,زيد,V,8,to increase,povećati se,0
+974,mubaArak,مُبَارَك,mubārak,برك,N,8,blessed,blagoslovljen,0
+975,tafar~aqa,تَفَرَّقَ,tafarraka,فرق,V,8,"to separate, divide",razdvojiti se,0
+976,ham~a,هَمَّ,hamma,همم,V,8,"to intend, be about to","namjeravati, htjeti",0
+977,janb,جَنب,džanb,جنب,N,8,side,"bok, strana",0
+978,nuzul,نُزُل,nuzul,نزل,N,8,"hospitality, lodging","ugošćenje, konak",0
+979,kabura,كَبُرَ,kabura,كبر,V,8,"to grow, be great","biti velik, narasti",0
+980,muHoSana`t,مُحْصَنَٰت,muhsanāt,حصن,N,8,chaste women,čedne žene,0
+981,qariyn,قَرِين,karīn,قرن,N,8,companion,"drug, pratilac",0
+982,mivoqaAl,مِثْقَال,miskāl,ثقل,N,8,weight,"težina, mjera",0
+983,nafara,نَفَرَ,nafara,نفر,V,8,to go forth,"krenuti, izaći",0
+984,m~awad~ap,مَوَدَّة,mavadda,ودد,N,8,affection,"ljubav, naklonost",0
+985,kaf~a,كَفَّ,kaffa,كفف,V,8,to restrain,"sustegnuti, zadržati",0
+986,yaqiyn,يَقِين,jakīn,يقن,N,8,certainty,"sigurno znanje, uvjerenje",0
+987,ya}isa,يَئِسَ,ja'isa,ياس,V,8,to despair,očajavati,0
+988,laEib,لَعِب,la'ib,لعب,N,8,play,igra,0
+989,xazaA^}in,خَزَآئِن,hazā'in,خزن,N,8,treasures,riznice,0
+990,Za`hir,ظَٰهِر,zāhir,ظهر,N,8,"apparent, outward","vidljiv, vanjski",0
+991,>a$ud~,أَشُدّ,ašudd,شدد,N,8,"full strength, maturity","zrelost, puna snaga",0
+992,yantaZiru,يَنتَظِرُ,jantaziru,نظر,V,8,to wait,čekati,0
+993,>agowayo,أَغْوَيْ,agvaj,غوي,V,8,to lead astray,zavesti,0
+994,Eajibu,عَجِبُ,'adžibu,عجب,V,8,to wonder,čuditi se,0
+995,{sotaDoEafu,ٱسْتَضْعَفُ,istad'afu,ضعف,V,8,to be oppressed,biti potlačen,0
+996,yam~,يَمّ,jamm,يمم,N,8,sea,more,0
+997,ba`raka,بَٰرَكَ,bāraka,برك,V,8,to bless,blagosloviti,0
+998,dam~ara,دَمَّرَ,dammara,دمر,V,8,to destroy,uništiti,0
+999,vala`v,ثَلَٰث,salās,ثلث,N,8,three,tri,0
+1000,kiydu,كِيدُ,kīdu,كيد,V,8,to plot,spletkariti,0
