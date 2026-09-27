@@ -18,3 +18,6 @@ for (const [from, to] of copies) {
   fs.copyFileSync(path.join(root, from), path.join(root, to));
   console.log(`${from} -> ${to}`);
 }
+
+// The reminder sender's copy of the content — see the script.
+require('./build-push-data.js');

@@ -58,3 +58,7 @@ scripts/data/*
 # copied into the web export by scripts/prepare-web.js
 public/quran.db
 public/sql-wasm-browser.wasm
+public/push-data.json
+
+# supabase link state
+supabase/.temp/

@@ -1,0 +1,6 @@
+# Only what the CLI needs to deploy the function. The cron calls it with a
+# shared secret, not a user token, so JWT verification is off.
+project_id = "tezkija"
+
+[functions.send-reminders]
+verify_jwt = false

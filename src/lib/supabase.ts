@@ -4,6 +4,8 @@ import { Session, SupabaseClient, createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
+import { forgetPushSubscription } from './notifications';
+
 /**
  * The Supabase client, or null when the build carries no project: accounts
  * and sync then simply don't exist, everything else keeps working from
@@ -79,5 +81,7 @@ export async function signInWithPassword(email: string, password: string): Promi
 
 export async function signOut(): Promise<void> {
   if (!supabase) return;
+  // The row's RLS needs the session, so this goes first.
+  await forgetPushSubscription().catch(() => {});
   await supabase.auth.signOut();
 }

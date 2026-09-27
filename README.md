@@ -174,9 +174,12 @@ What differs from native, all behind platform files (`*.web.ts`):
   fetches `/quran.db` and opens it in memory with sql.js (SQLite as
   WebAssembly). `scripts/prepare-web.js` copies the database and the wasm
   into `public/` first; both are gitignored there.
-- **Notifications**: `notifications.web.ts` is a stub — no reminders on the
-  web for now. Delivery times can still be edited (they sync to the phone
-  app through the account). Server-sent Web Push is a later phase.
+- **Notifications**: `notifications.web.ts` schedules nothing locally.
+  Reminders arrive as **Web Push**, sent by the `send-reminders` Edge
+  Function — see "Web Push reminders" below. The enable banner asks the
+  browser for permission and stores the subscription in `push_subscriptions`;
+  it needs an account first, since the sender reads the delivery times from
+  the synced settings.
 - **Time picker**: `components/time-picker.web.tsx` is an `<input type="time">`
   with a confirm button; the community picker has no web build.
 - **Offline**: `public/sw.js` precaches the shell, the database and the
@@ -185,6 +188,39 @@ What differs from native, all behind platform files (`*.web.ts`):
 - **Installable**: `src/app/+html.tsx` links `public/manifest.json`, the
   home-screen icons and registers the service worker. On iPhone: Safari →
   Share → Add to Home Screen.
+
+### Web Push reminders
+
+The phone app schedules its reminders locally; a browser can't, so for the
+web app a Supabase Edge Function does it server-side:
+
+- `scripts/build-push-data.js` (run by every web export) writes
+  `public/push-data.json`: the 340 ayahs with both translations, the
+  lessons with their cards, the lemmas with one example each. The function
+  reads that from the deployed site instead of carrying the database.
+- `supabase/functions/send-reminders/`: every 5 minutes (pg_cron →
+  pg_net → the function) it takes each user with a push subscription,
+  reads their synced `settings.v1`, `guidance.cursor.v1`, `vocab.cursor.v1`
+  and `vocab.progress.v1`, finds the delivery times that fell in the last
+  five minutes in the device's timezone, builds the same content the phone
+  would (same cursor, same word rules) and pushes it. `push_log` rows are
+  the lock against sending a slot twice.
+- `public/sw.js` shows the push and opens the app on the URL it carries:
+  the reader on the passage, the lesson, or the quiz.
+
+Setup, once:
+
+1. `npx web-push generate-vapid-keys`. Public key → `EXPO_PUBLIC_VAPID_PUBLIC_KEY`
+   in `.env` and in Vercel; private key → function secret.
+2. `npx supabase functions deploy send-reminders --project-ref <ref>` and
+   `npx supabase secrets set VAPID_PUBLIC_KEY=… VAPID_PRIVATE_KEY=…
+   VAPID_SUBJECT=mailto:… CRON_SECRET=<random> SITE_URL=https://tezkija.adiv.dev --project-ref <ref>`.
+3. Run `supabase/migrations/0002_push.sql` in the SQL editor with
+   `<CRON_SECRET>` replaced by the same random value. It enables pg_cron and
+   pg_net, creates the tables and schedules the job.
+4. In the installed web app: Ajeti tab → "Enable notifications" → allow.
+   iPhone only shows the prompt from the home-screen app, never from a
+   Safari tab, and needs iOS 16.4 or later.
 
 ### Deploying to Vercel
 

@@ -95,6 +95,9 @@ export function clearLastTap(): void {
   Notifications.clearLastNotificationResponseAsync?.().catch(() => {});
 }
 
+/** Web only — the phone app has no push subscription. */
+export async function forgetPushSubscription(): Promise<void> {}
+
 export async function ensureAndroidChannel(): Promise<void> {
   if (Platform.OS !== 'android') return;
   await Notifications.setNotificationChannelAsync(ANDROID_CHANNEL_ID, {
