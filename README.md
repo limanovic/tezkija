@@ -112,8 +112,8 @@ An **in-order** time sends the ayah under the cursor (`guidance.cursor.v1`)
 — the same one at every in-order time, every day, until it is ticked as
 practised (☑ Usvojen, in the Reader or the full list; ticks live in
 `guidance.done.v1`). Ticking the ayah under the cursor moves the cursor to the
-next unticked one and rebuilds the window. The cursor never advances on its
-own. "Počni ponovo od početka" clears every tick. Random times ignore ticks
+next unticked one and rebuilds the window; unticking an ayah behind the cursor
+moves the cursor back to it. The cursor never advances on its own. "Počni ponovo od početka" clears every tick. Random times ignore ticks
 and pick freely.
 
 Occurrence times are built from local wall-clock components

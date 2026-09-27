@@ -185,7 +185,7 @@ export default function GuidanceScreen() {
       .catch(() => {});
   }, []);
 
-  // Ticking may move the cursor; pending in-order reminders hold the old ayah.
+  // A tick or untick may move the cursor; pending in-order reminders hold the old ayah.
   const onToggleDone = useCallback((ordinal: number) => {
     (async () => {
       const result = await toggleDone(ordinal);

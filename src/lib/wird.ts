@@ -9,8 +9,9 @@ import { TOTAL_GUIDANCE } from './db';
  * again and again until it is ticked as practised — the idea being that an
  * ayah is read until it has become habit, then the next one. Ticks are kept
  * as a set of ordinals (`guidance.done.v1`); ticking the ayah under the
- * cursor moves the cursor to the next unticked one. Random times ignore all
- * of this and pick freely.
+ * cursor moves the cursor to the next unticked one, and unticking an ayah
+ * behind the cursor moves it back there. Random times ignore all of this and
+ * pick freely.
  *
  * There is one position, not one per delivery time: every in-order time shows
  * the same passage that day. Kept out of Settings on purpose — Settings is held
@@ -92,18 +93,20 @@ export function nextUnticked(done: Set<number>, from: number): number {
 
 /**
  * Tick or untick an ayah. Ticking the one under the cursor carries the cursor
- * forward to the next unticked ayah; unticking never moves it back — the
- * reading goes forward, an earlier ayah can be reopened without rewinding.
+ * forward to the next unticked ayah. Unticking an ayah the cursor has already
+ * passed brings the cursor back to it — an ayah that is not practised after
+ * all is the one to be sent again. Unticking one further ahead changes nothing.
  */
 export async function toggleDone(ordinal: number): Promise<{ done: Set<number>; cursor: number }> {
   const done = await loadDone();
-  if (done.has(ordinal)) done.delete(ordinal);
+  const unticking = done.has(ordinal);
+  if (unticking) done.delete(ordinal);
   else done.add(ordinal);
   await saveDone(done);
-  let cursor = await loadCursor();
-  if (done.has(cursor)) {
-    cursor = nextUnticked(done, cursor);
-    await saveCursor(cursor);
-  }
+  const stored = await loadCursor();
+  let cursor = stored;
+  if (unticking && ordinal < cursor) cursor = ordinal;
+  else if (done.has(cursor)) cursor = nextUnticked(done, cursor);
+  if (cursor !== stored) await saveCursor(cursor);
   return { done, cursor };
 }
