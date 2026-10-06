@@ -104,7 +104,7 @@ export default function SettingsScreen() {
     const lang = languageByCode.get(code);
     return (
       <View key={code} style={styles.row}>
-        <View>
+        <View style={styles.rowText}>
           <Text style={styles.rowLabel}>{lang?.native_name ?? code}</Text>
           {lang && code !== 'ar' && <Text style={styles.rowSub}>{lang.translator}</Text>}
         </View>
@@ -131,7 +131,7 @@ export default function SettingsScreen() {
               accessibilityRole="button"
               onPress={() => router.push('/account')}
             >
-              <View>
+              <View style={styles.rowText}>
                 <Text style={styles.rowLabel}>{session?.user.email ?? t('signIn')}</Text>
                 {!session && <Text style={styles.rowSub}>{t('accountHint')}</Text>}
               </View>

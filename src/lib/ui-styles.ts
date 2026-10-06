@@ -61,7 +61,10 @@ export function makeListStyles(theme: Theme) {
       justifyContent: 'space-between',
       paddingVertical: 12,
     },
-    rowLabel: { fontSize: 16, color: theme.text },
+    // Wraps a label + sub-line so long text wraps instead of pushing the
+    // trailing control (switch, chevron) out of the row.
+    rowText: { flex: 1, marginRight: 12 },
+    rowLabel: { flexShrink: 1, fontSize: 16, color: theme.text },
     rowSub: { fontSize: 12, color: theme.textMuted, marginTop: 2 },
     rowRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     rowValue: { fontSize: 15, color: theme.textMuted },
